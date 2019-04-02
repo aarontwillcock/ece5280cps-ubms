@@ -1,11 +1,26 @@
 #BMS Driver
 
 #Dependencies
-import ubmsComms
+import ubmsComms        #Communications
+import ubmsUtilities    #packing/unpacking load requests
+import struct
 
-bmsComm = ubmsComms.uUDPComm("127.0.0.1",5005,"127.0.0.1",5005)
+#Establish outgoing comm on 127.0.0.1:5217
+#Establish incoming comm on 127.0.0.1:5218
+bmsComm = ubmsComms.uUDPComm(
+            "127.0.0.1",5217,
+            "127.0.0.1",5218)
 
-bmsComm.udpSendMsg("1")
-data, addr = bmsComm.udpRecvMsg()
+#Tell LMS we are online
+bmsComm.udpSendMsg("BMS Online")
 
-print(data)
+#Begin Periodic routine
+while True:
+    #Wait for messages
+    pkg, addr = bmsComm.udpRecvMsg()
+
+    #Unpack data
+    obj = ubmsUtilities.structToObj(pkg,11)
+
+    #Print data
+    print(obj)

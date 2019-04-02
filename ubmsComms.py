@@ -1,5 +1,6 @@
 #Dependencies
 import socket
+import struct
 
 #Communication class for setting up UDP
 class uUDPComm:
@@ -30,16 +31,31 @@ class uUDPComm:
 
     def udpSendMsg(self,msg):
 
-        #Encode message (required in Python3.x)
-        encodedMsg = msg.encode()
+        #Check if message is a string
+        if(isinstance(msg, str)):
+            #Encode message (required in Python3.x)
+            msg = msg.encode()
 
         #Send message
-        self.sSock.sendto(encodedMsg, (self.sIP,self.sPORT))
+        self.sSock.sendto(msg, (self.sIP,self.sPORT))
 
-    def udpRecvMsg(self):
+
+    def udpRecvMsg(self,bufferSize):
 
         #Receive message
-        msg, addr = self.lSock.recvfrom(1024)
+        msg, addr = self.lSock.recv(bufferSize)
 
         #Return values
         return msg, addr
+
+    def udpRecvMsgHeader(self):
+        return udpRecvMsg(struct.calcsize('i'))
+
+    def udpRecvMsgBodySize(self):
+        return udpRecvMsg(struct.calcsize('i'))
+
+#API Management
+class ubmsAppendAPIcall:
+    def __init__(self,callId,obj):
+        self.callId = callId
+        self.__dict__.update(vars(obj))
