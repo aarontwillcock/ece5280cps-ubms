@@ -33,6 +33,7 @@ class uUDPComm:
 
         #Check if message is a string
         if(isinstance(msg, str)):
+
             #Encode message (required in Python3.x)
             msg = msg.encode()
 
@@ -40,22 +41,42 @@ class uUDPComm:
         self.sSock.sendto(msg, (self.sIP,self.sPORT))
 
 
+    #General UDP Receive
     def udpRecvMsg(self,bufferSize):
 
         #Receive message
-        msg, addr = self.lSock.recv(bufferSize)
+        msg, addr = self.lSock.recvfrom(bufferSize)
 
         #Return values
         return msg, addr
 
-    def udpRecvMsgHeader(self):
-        return udpRecvMsg(struct.calcsize('i'))
-
-    def udpRecvMsgBodySize(self):
-        return udpRecvMsg(struct.calcsize('i'))
-
 #API Management
-class ubmsAppendAPIcall:
-    def __init__(self,callId,obj):
-        self.callId = callId
-        self.__dict__.update(vars(obj))
+def createAPIcall(actionId,obj):
+
+    #Create header
+    data = struct.pack('i', actionId)
+
+    #Add body length to message
+    N = len(vars(obj))
+    data += struct.pack('i',N)
+
+    #Add body to message
+    data += struct.pack('f'*N,*vars(obj).values())
+
+    #Return packaged data
+    return data
+
+def extractAPIcall(data):
+
+    #Extract header, body
+    header, body = data[:8], data[8:]
+
+    #Unpack header
+    actionId, N = struct.unpack('ii',header)
+
+    #Unpack body
+    body = struct.unpack('f'*N,body)
+
+    #Return actionId, body
+    return actionId, body
+

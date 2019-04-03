@@ -3,7 +3,8 @@
 #Dependencies
 import ubmsComms        #Communications
 import ubmsUtilities    #packing/unpacking load requests
-import struct
+import ubmsLoad         #Handling load requests
+import ubmsSupply       #Modeling battery
 
 #Establish outgoing comm on 127.0.0.1:5217
 #Establish incoming comm on 127.0.0.1:5218
@@ -14,13 +15,35 @@ bmsComm = ubmsComms.uUDPComm(
 #Tell LMS we are online
 bmsComm.udpSendMsg("BMS Online")
 
+#Initialize our own battery
+batt = ubmsSupply.uBatt(4.8,1,1200)
+
 #Begin Periodic routine
 while True:
-    #Wait for messages
-    pkg, addr = bmsComm.udpRecvMsg()
+    
+    #Receive message
+    data, addr = bmsComm.udpRecvMsg(1024)
+    print(data)
 
-    #Unpack data
-    obj = ubmsUtilities.structToObj(pkg,11)
+    #Extract API call from message
+    actionId, body = ubmsComms.extractAPIcall(data)
 
-    #Print data
-    print(obj)
+    #Decode Call
+    #   Call is a load request
+    if(actionId == 1):
+        
+        #Decode the request
+        loadReq = ubmsLoad.uLoadReq(body)
+
+        #Determine if request can be fulfilled
+        isPossible = ubmsSupply.canSupply(batt,loadReq)
+
+        #Reply accordingly
+        loadReqReplyArgs = (loadReq.token,int(isPossible))
+        reply = ubmsLoad.uLoadReqReply(loadReqReplyArgs)
+
+        #Create API call
+        apiCall = ubmsComms.createAPIcall(2,reply)
+
+        #Send it!
+        bmsComm.udpSendMsg(apiCall)
