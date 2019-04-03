@@ -9,3 +9,4 @@ BMS Sends
 1 = Reject (Cannot meet min)
 2 = Warn Accept (Can meet min requirements)
 3 = Accept (Can meet max requirements)
+
