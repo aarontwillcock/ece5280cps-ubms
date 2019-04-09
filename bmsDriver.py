@@ -19,13 +19,26 @@ bmsComm.udpSendMsg("BMS Online")
 #Initialize our own battery
 batt = ubmsSupply.uBatt(4.8,1,1200)
 
+
+
+#Create GPIO ports
+#cc = "Coulomb Counter"
+#   Inputs
+ccInt = piGpio.gpioPin(13,False,False)    #Interrupt
+ccPol = piGpio.gpioPin(6,False,False)      #Polarity
+#   Outputs
+ccClr = piGpio.gpioPin(26,True,False)         #Clear
+ccShd = piGpio.gpioPin(19,True,False)      #Shutdown
+
+#Initialize output values
+ccClr.off()
+ccShd.off()
+
 #Setup interrupt handling
-def printIsr():
+def printIsr(self):
     print("ISR!")
     return
-
-coulombCounter = piGpio.gpioPin(13,False,False)
-coulombCounter.createInterrupt(True,printIsr,10)
+ccInt.createInterrupt(True,printIsr,10)
 
 #Begin Periodic routine
 while True:
