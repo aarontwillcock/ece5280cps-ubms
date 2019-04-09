@@ -7,7 +7,7 @@ import ubmsLoad         #Creating loads
 import piGpio           #Reading/writing to GPIO
 
 #Establish hardware control
-pin14 = piGpio.gpioPin(14,true,false)
+pin14 = piGpio.gpioPin(14,True,False)
 
 #Establish outgoing comm on 127.0.0.1:5218
 #Establish incoming comm on 127.0.0.1:5217

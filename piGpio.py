@@ -12,21 +12,31 @@ class gpioPin:
         self.enabled = enabled
 
         #Initialize pin as input or output
+        self.out = out
         if(out):
             gpio.setup(self.pin, gpio.OUT)
         else:
             gpio.setup(self.pin, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 
     def on(self):
-        gpio.output(self.pin,gpio.HIGH)
-        self.enabled = 1
+        if(self.out):
+            gpio.output(self.pin,gpio.HIGH)
+            self.enabled = 1
 
     def off(self):
-        gpio.output(self.pin,gpio.LOW)
-        self.enabled = 0
+        if(self.out):
+            gpio.output(self.pin,gpio.LOW)
+            self.enabled = 0
 
     def toggle(self):
-        if(self.enabled):
-            self.off()
+        if(self.out):
+            if(self.enabled):
+                self.off()
+            else:
+                self.on()
+
+    def createInterrupt(self,rising,fxn, debounceMs):
+        if(rising):
+            gpio.add_event_detect(self.pin,gpio.RISING,fxn,debounceMs)
         else:
-            self.on()
+            gpio.add_event_detect(self.pin,gpio.FALLING,fxn,debounceMs)

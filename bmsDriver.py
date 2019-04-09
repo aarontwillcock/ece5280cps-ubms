@@ -5,6 +5,7 @@ import ubmsComms        #Communications
 import ubmsUtilities    #packing/unpacking load requests
 import ubmsLoad         #Handling load requests
 import ubmsSupply       #Modeling battery
+import piGpio           #Interrupt Handling, polarity detection
 
 #Establish outgoing comm on 127.0.0.1:5217
 #Establish incoming comm on 127.0.0.1:5218
@@ -17,6 +18,13 @@ bmsComm.udpSendMsg("BMS Online")
 
 #Initialize our own battery
 batt = ubmsSupply.uBatt(4.8,1,1200)
+
+#Setup interrupt handling
+def printIsr():
+    print("ISR!")
+
+coulombCounter = piGpio.gpioPin(13,False,False)
+coulombCounter.createInterrupt(True,printIsr,10)
 
 #Begin Periodic routine
 while True:
