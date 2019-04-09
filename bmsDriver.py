@@ -22,6 +22,7 @@ batt = ubmsSupply.uBatt(4.8,1,1200)
 #Setup interrupt handling
 def printIsr():
     print("ISR!")
+    return
 
 coulombCounter = piGpio.gpioPin(13,False,False)
 coulombCounter.createInterrupt(True,printIsr,10)
