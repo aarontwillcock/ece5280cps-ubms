@@ -23,11 +23,11 @@ class uLoadReq:
 
         #Two arguments (token, uLoadArgs)
         if(L==2):
-            self.token = args[L-1]
-            self.__dict__.update(vars(args[:L-1]))
+            self.token = args[0]
+            self.__dict__.update(vars(args[1]))
         elif(L==12):
-            self.token = args[L-1]
-            load = uLoad(args[:L-1])
+            self.token = args[L]
+            load = uLoad(args[:L])
             self.__dict__.update(vars(load))
 
 #Reply template for BMS to accept / reject load request
