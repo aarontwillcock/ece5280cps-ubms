@@ -39,5 +39,5 @@ class uLoadReqReply:
 
         if(L == 2):
             self.token  = args[0]
-            self.ans    = args[1]
+            self.supplyError = args[1]
 

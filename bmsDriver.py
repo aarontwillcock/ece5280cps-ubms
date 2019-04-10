@@ -92,11 +92,14 @@ def periodic():
         loadReq = ubmsLoad.uLoadReq(body)
 
         #Determine if request can be fulfilled
-        isPossible = ubmsSupply.canSupply(batt,loadReq)
+        supplyError = ubmsSupply.isProblemToSupply(batt,loadReq)
 
         #Reply accordingly
-        loadReqReplyArgs = (loadReq.token,int(isPossible))
+        loadReqReplyArgs = (loadReq.token,int(supplyError))
         reply = ubmsLoad.uLoadReqReply(loadReqReplyArgs)
+
+        #Print out reply
+        print("Replying with: Token ",reply.token," Supply Error: ", reply.supplyError)
 
         #Create API call
         apiCall = ubmsComms.createAPIcall(2,reply)

@@ -10,7 +10,7 @@ class uBatt:
         self.Imax = (self.mAh / 1000.0) * self.C
         self.mAhConsumed = 0
 
-def canSupply(batt, loadReq):
+def isProblemToSupply(batt, loadReq):
     
     #Check for battery voltage
     if(batt.V < loadReq.Vmin or batt.V > loadReq.Vmax):

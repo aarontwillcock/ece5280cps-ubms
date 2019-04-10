@@ -77,6 +77,6 @@ if(actionId == 2):
     loadReply = ubmsLoad.uLoadReqReply(body)
 
     #Actuate
-    if(loadReply.ans):
+    if(not loadReply.supplyError):
         resLoad.on()
         print("load enabled")
