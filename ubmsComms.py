@@ -50,6 +50,21 @@ class uUDPComm:
         #Return values
         return msg, addr
 
+    #Change blocking
+    def udpSetBlocking(self,sendingSock,block):
+        
+        #Select socket
+        if(sendingSock):
+            mSock = self.sSock
+        else:
+            mSock = self.lSock
+
+        #Execute blocking request
+        if(block):
+            mSock.setblocking(1)
+        else:
+            mSock.setblocking(0)
+
 #API Management
 def createAPIcall(actionId,obj):
 

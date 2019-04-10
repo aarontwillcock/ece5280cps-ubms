@@ -6,12 +6,8 @@ import ubmsUtilities    #packing/unpacking load requests
 import ubmsLoad         #Handling load requests
 import ubmsSupply       #Modeling battery
 import piGpio           #Interrupt Handling, polarity detection
-#import bmsPinDefs       #Pin definitions for BMS
-
-#Pin Definitions
-CC_INT_PIN = 6
-CC_POL_PIN = 13
-CC_CLR_PIN = 19
+import time             #Time tracking
+import PIPPDefs         #Pin and IP defines
 
 #mAh Consumed Definition
 #from (https://www.analog.com/media/en/technical-documentation/data-sheets/4150fc.pdf)
@@ -22,10 +18,10 @@ MAH_PER_INT = 0.17067759
 #   GPIO ports
 #   cc = "Coulomb Counter"
 #       Inputs
-ccInt = piGpio.gpioPin(CC_INT_PIN,False,False)  #Interrupt
-ccPol = piGpio.gpioPin(CC_POL_PIN,False,False)  #Polarity
+ccInt = piGpio.gpioPin(PIPPDefs.CC_INT_PIN,False,False)  #Interrupt
+ccPol = piGpio.gpioPin(PIPPDefs.CC_POL_PIN,False,False)  #Polarity
 #       Outputs
-ccClr = piGpio.gpioPin(CC_CLR_PIN,True,False)   #Clear
+ccClr = piGpio.gpioPin(PIPPDefs.CC_CLR_PIN,True,False)   #Clear
 #   Battery Init
 batt = ubmsSupply.uBatt(4.8,1,1200)
 #       Initialize Coulomb Counter
@@ -58,22 +54,16 @@ def printIsr(self):
 #(https://learn.sparkfun.com/tutorials/ltc4150-coulomb-counter-hookup-guide/all)
 ccInt.createInterrupt(False,printIsr,10)
 
-#IP Addr / Port Defs
-#   IPs
-LMS_IP = "192.168.1.217"
-BMS_IP = "192.168.1.218"
-SELF_IP = "127.0.0.1"
-#   Ports
-LMS_PORT = 5217
-BMS_PORT = 5218
-
 #Setup communications
 bmsComm = ubmsComms.uUDPComm(
-            LMS_IP,LMS_PORT,    #Send-to-address
-            BMS_IP,BMS_PORT)    #Recv-from address
-
-#Tell LMS we are online
-bmsComm.udpSendMsg("BMS Online")
+            PIPPDefs.LMS_IP,     #Send-to IP
+            PIPPDefs.LMS_PORT,   #Send-to port
+            PIPPDefs.BMS_IP,     #Recv-frm IP
+            PIPPDefs.BMS_PORT)   #Recv-frm port
+#   Make sending sock blocking
+bmsComm.udpSetBlocking(True,True)
+#   Make receiving sock NON-blocking
+bmsComm.udpSetBlocking(False,False)
 
 #Create Periodic Routine
 def periodic():
