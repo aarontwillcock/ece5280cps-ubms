@@ -47,8 +47,8 @@ impossibleLoadArgs =    (12,24,0,100,0,60,1000, 0xDEAD)
 
 #DishonestLoads    All are 0-6V, 0-14mA, 60s from now, for 10s, due 100s from release
 dishonestLoad1Args =    (0,6,0,0.014,60,10,100, 0xBEEF)     #Load will be drawn too early
-dishonestLoad2Args =    (0,6,0,0.014,60,10,100, 0xBAAD)     #Load will be too large
-dishonestLoad3Args =    (0,6,0,0.014,60,10,100, 0xCACA)     #Load will be too little
+dishonestLoad2Args =    (0,6,0,0.014,80,10,100, 0xBAAD)     #Load will be too large
+dishonestLoad3Args =    (0,6,0,0.014,100,10,100, 0xCACA)     #Load will be too little
 
 #Create Token-Pin dictionary
 tpd = {

@@ -86,6 +86,8 @@ def handle(data):
         loadReqReplyArgs = (loadReq.token,int(supplyError))
         reply = ubmsLoad.uLoadReqReply(loadReqReplyArgs)
 
+        #TODO: Log the accepted load requests
+
         #Print out reply
         print("Replying with: Token ",reply.token," Supply Error: ", reply.supplyError)
 
@@ -106,6 +108,11 @@ def periodic():
         handle(data)
         print(data)
     
+    #TODO: Adjust the min, maximum current draws as time progresses
+    #TODO: Enforce current boundaries
+    #TODO: Enforce 
+
+    #Sleep
     time.sleep(1)
 
 #Main loop
@@ -117,6 +124,6 @@ try:
         #Call periodic (main) function
         periodic()
 
-#   If interrupted, cleanup
+#   If interrupted, cleanup GPIO
 except KeyboardInterrupt:
     piGpio.cleanup()
