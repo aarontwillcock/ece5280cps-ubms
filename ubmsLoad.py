@@ -32,6 +32,26 @@ class uLoadReq:
             self.Emax =         args[9]
             self.deadline =     args[10]
             self.token =        args[11]
+    
+    def getValues(self):
+
+        #Explicitly order values
+        values = (
+                    self.Vmin,
+                    self.Vmax,
+                    self.Imin,
+                    self.Imax,
+                    self.Pmin,
+                    self.Pmax,
+                    self.releaseTime,
+                    self.duration,
+                    self.Emin,
+                    self.Emax,
+                    self.deadline,
+                    self.token,
+                )
+
+        return values
 
 #Reply template for BMS to accept / reject load request
 class uLoadReqReply:
@@ -43,4 +63,11 @@ class uLoadReqReply:
         if(L == 2):
             self.token  = args[0]
             self.supplyError = args[1]
+
+    def getValues(self):
+        
+        #Explicitly order values
+        values = (self.token, self.supplyError)
+
+        return values
 
