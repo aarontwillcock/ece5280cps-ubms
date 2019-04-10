@@ -60,8 +60,24 @@ def createAPIcall(actionId,obj):
     N = len(vars(obj))
     data += struct.pack('i',N)
 
+    #Create value list
+    values = (
+            obj.Vmin,
+            obj.Vmax,
+            obj.Imin,
+            obj.Imax,
+            obj.Pmin,
+            obj.Pmax,
+            obj.releaseTime,
+            obj.duration,
+            obj.Emin,
+            obj.Emax,
+            obj.deadline,
+            obj.token,
+            )
+
     #Add body to message
-    data += struct.pack('f'*N,*obj.__dict__.values())
+    data += struct.pack('f'*N,*values)
 
     #Return packaged data
     return data
