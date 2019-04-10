@@ -61,7 +61,7 @@ def createAPIcall(actionId,obj):
     data += struct.pack('i',N)
 
     #Add body to message
-    data += struct.pack('f'*N,*vars(obj).values())
+    data += struct.pack('f'*N,*obj.__dict__.values())
 
     #Return packaged data
     return data
