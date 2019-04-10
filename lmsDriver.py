@@ -24,8 +24,8 @@ loadList.append(dishonestLoad2)
 loadList.append(dishonestLoad3)
 
 #Initialize loads to off
-for i in loadList:
-    loadList[i].off()
+for load in loadList:
+    load.off()
 
 #Setup communications
 bmsComm = ubmsComms.uUDPComm(
@@ -79,17 +79,17 @@ loadArgs.append(dishonestLoad3Args)
 
 #Create Load Requests
 loadReqs = []
-for i in loadArgs:
-    loadReqs.append(ubmsLoad.uLoadReq(loadArgs))
+for args in loadArgs:
+    loadReqs.append(ubmsLoad.uLoadReq(args))
 
 #Create API calls
 apiCalls = []
-for i in loadReqs:
-    apiCalls.append(ubmsComms.createAPIcall(1,loadReqs[i]))
+for request in loadReqs:
+    apiCalls.append(ubmsComms.createAPIcall(1,requests))
 
 #Send API calls (load requests) over UDP
-for i in apiCalls:
-    bmsComm.udpSendMsg(apiCalls[i])
+for calls in apiCalls:
+    bmsComm.udpSendMsg(calls)
 
     #Wait for reply
     data, addr = bmsComm.udpRecvMsg(1024)
