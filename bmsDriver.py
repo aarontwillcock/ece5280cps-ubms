@@ -23,7 +23,7 @@ MAH_PER_INT = 0.17067759
 #   cc = "Coulomb Counter"
 #       Inputs
 ccInt = piGpio.gpioPin(CC_INT_PIN,False,False)  #Interrupt
-ccPol = piGpio.gpioPin(CC_POL_PIN,False,False)   #Polarity
+ccPol = piGpio.gpioPin(CC_POL_PIN,False,False)  #Polarity
 #       Outputs
 ccClr = piGpio.gpioPin(CC_CLR_PIN,True,False)   #Clear
 #   Battery Init

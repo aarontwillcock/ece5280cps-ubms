@@ -57,6 +57,6 @@ class uLoadReqReply:
         L = len(args)
 
         if(L == 2):
-            self.token  = args[1]
-            self.supplyError = args[0]
+            self.token  = args[0]
+            self.supplyError = args[1]
 
