@@ -67,37 +67,43 @@ bmsComm.udpSetBlocking(False,False)
 
 #Create Periodic Routine
 def periodic():
-    #Receive message
-    data, addr = bmsComm.udpRecvMsg(1024)
-    print(data)
 
-    #Extract API call from message
-    actionId, body = ubmsComms.extractAPIcall(data)
+    #Try to receive message
+    try:
+        data, addr = bmsComm.udpRecvMsg(1024)
+        print(data)
 
-    #Decode Call
-    #   Call is a load request
-    if(actionId == 1):
-        
-        #Decode the request
-        loadReq = ubmsLoad.uLoadReq(body)
+        #Extract API call from message
+        actionId, body = ubmsComms.extractAPIcall(data)
 
-        print(loadReq.getValues())
+        #Decode Call
+        #   Call is a load request
+        if(actionId == 1):
+            
+            #Decode the request
+            loadReq = ubmsLoad.uLoadReq(body)
 
-        #Determine if request can be fulfilled
-        supplyError = ubmsSupply.isProblemToSupply(batt,loadReq)
+            print(loadReq.getValues())
 
-        #Reply accordingly
-        loadReqReplyArgs = (loadReq.token,int(supplyError))
-        reply = ubmsLoad.uLoadReqReply(loadReqReplyArgs)
+            #Determine if request can be fulfilled
+            supplyError = ubmsSupply.isProblemToSupply(batt,loadReq)
 
-        #Print out reply
-        print("Replying with: Token ",reply.token," Supply Error: ", reply.supplyError)
+            #Reply accordingly
+            loadReqReplyArgs = (loadReq.token,int(supplyError))
+            reply = ubmsLoad.uLoadReqReply(loadReqReplyArgs)
 
-        #Create API call
-        apiCall = ubmsComms.createAPIcall(2,reply)
+            #Print out reply
+            print("Replying with: Token ",reply.token," Supply Error: ", reply.supplyError)
 
-        #Send it!
-        bmsComm.udpSendMsg(apiCall)
+            #Create API call
+            apiCall = ubmsComms.createAPIcall(2,reply)
+
+            #Send it!
+            bmsComm.udpSendMsg(apiCall)
+
+    except socket.error, e:
+        print("No UDP data")
+        time.sleep(1)
 
 #Main loop
 #   Try-Except for keyboard interrupts
