@@ -78,4 +78,4 @@ if(actionId == 2):
 
     #Actuate
     if(loadReply.ans):
-        fanLoad.on()
+        resLoad.on()

@@ -42,8 +42,8 @@ def printIsr(self):
     pol = ccPol.get()
 
     #Clear the interrupt on CC
-    ccClr.on()
     ccClr.off()
+    ccClr.on()
     
     #Record the mAh consumed
     batt.mAhConsumed += MAH_PER_INT
