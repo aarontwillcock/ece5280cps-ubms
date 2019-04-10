@@ -84,7 +84,7 @@ for args in loadArgs:
 
 #Create API calls
 apiCalls = []
-for request in loadReqs:
+for requests in loadReqs:
     apiCalls.append(ubmsComms.createAPIcall(1,requests))
 
 #Send API calls (load requests) over UDP
