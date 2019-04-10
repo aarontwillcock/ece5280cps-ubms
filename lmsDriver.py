@@ -41,19 +41,13 @@ bmsComm = ubmsComms.uUDPComm(
             BMS_IP,BMS_PORT,    #Send-to address
             LMS_IP,LMS_PORT)    #Recv-from address
 
-#Create load
-uLoadArgs = (0,6,0,0.200,100,10,100)
-load1 = ubmsLoad.uLoad(uLoadArgs)
-print(load1.__dict__)
-
 #Create load request
 #   Token
 token = 0xDEAD
-#   Combing token with load
-uLoadReqArgs = (token,load1)
-#   Creating load request
-loadReq1 = ubmsLoad.uLoadReq(uLoadReqArgs)
-print(vars(loadReq1))
+#   Load
+uLoadArgs = (0,6,0,0.200,100,10,100, token)
+loadReq1 = ubmsLoad.uLoadReq(uLoadArgs)
+print(loadReq1.__dict__)
 
 #Create API call for UDP
 apiCall = ubmsComms.createAPIcall(1,loadReq1)
