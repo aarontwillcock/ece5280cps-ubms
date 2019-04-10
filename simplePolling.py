@@ -7,7 +7,7 @@ import time
 gpio.setmode(gpio.BCM)
 
 #Setup pin
-gpio.setup(13,gpio.IN, pull_up_down=gpio.PUD_UP)
+gpio.setup(13,gpio.IN, pull_up_down=gpio.PUD_DOWN)
 gpio.setup(26,gpio.OUT)
 gpio.setup(19,gpio.OUT)
 
@@ -15,7 +15,7 @@ gpio.setup(19,gpio.OUT)
 gpio.output(26,gpio.LOW)
 
 while True:
-    if(gpio.input(13)):
+    if(not gpio.input(13)):
         print("Interrupted!")
     
         gpio.output(19,gpio.HIGH)
