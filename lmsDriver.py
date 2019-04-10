@@ -79,3 +79,4 @@ if(actionId == 2):
     #Actuate
     if(loadReply.ans):
         resLoad.on()
+        print("load enabled")
