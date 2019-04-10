@@ -15,15 +15,18 @@ gpio.setup(19,gpio.OUT)
 #Disable the clear
 gpio.output(19,gpio.HIGH)
 
-while True:
-    if(not gpio.input(13)):
-        print("Interrupted!")
-    
-        gpio.output(19,gpio.LOW)
-        gpio.output(19,gpio.HIGH)
-    
-    else:
-        print("Pin high (no interrupt)")
+try:
+    while True:
+        if(not gpio.input(13)):
+            print("Interrupted!")
+        
+            gpio.output(19,gpio.LOW)
+            gpio.output(19,gpio.HIGH)
+        
+        else:
+            print("Pin high (no interrupt)")
 
-    time.sleep(5)
-    
+        time.sleep(5)
+        
+except KeyboardInterrupt:
+        gpio.cleanup()
