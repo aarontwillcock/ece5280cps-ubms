@@ -61,8 +61,8 @@ LMS_IP = "192.168.1.217"
 BMS_IP = "192.168.1.218"
 SELF_IP = "127.0.0.1"
 #   Ports
-LMS_PORT = "5217"
-BMS_PORT = "5218"
+LMS_PORT = 5217
+BMS_PORT = 5218
 
 #Setup communications
 bmsComm = ubmsComms.uUDPComm(
