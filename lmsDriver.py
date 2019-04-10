@@ -44,6 +44,7 @@ bmsComm = ubmsComms.uUDPComm(
 #Create load
 uLoadArgs = (0,6,0,0.200,100,10,100)
 load1 = ubmsLoad.uLoad(uLoadArgs)
+print(vars(load1))
 
 #Create load request
 #   Token
