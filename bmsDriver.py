@@ -100,12 +100,13 @@ def periodic():
 
     #Try to receive message
     data, addr = bmsComm.udpRecvMsg(1024)
-    print(data)
 
     #Handle if data returned
     if(not(data == None) and not(addr == None)):
         handle(data)
+        print(data)
     
+    time.sleep(1)
 
 #Main loop
 #   Try-Except for keyboard interrupts
