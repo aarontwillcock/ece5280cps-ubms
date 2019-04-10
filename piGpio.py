@@ -34,6 +34,10 @@ class gpioPin:
                 self.off()
             else:
                 self.on()
+    
+    def get(self):
+        if(not self.out):
+            return gpio.input(self.pin)
 
     def createInterrupt(self,rising,fxn, debounceMs):
         if(rising):

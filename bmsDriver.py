@@ -19,16 +19,14 @@ bmsComm.udpSendMsg("BMS Online")
 #Initialize our own battery
 batt = ubmsSupply.uBatt(4.8,1,1200)
 
-
-
 #Create GPIO ports
 #cc = "Coulomb Counter"
 #   Inputs
-ccInt = piGpio.gpioPin(13,False,False)    #Interrupt
-ccPol = piGpio.gpioPin(6,False,False)      #Polarity
+ccInt = piGpio.gpioPin(13,False,False)  #Interrupt
+ccPol = piGpio.gpioPin(6,False,False)   #Polarity
 #   Outputs
-ccClr = piGpio.gpioPin(26,True,False)         #Clear
-ccShd = piGpio.gpioPin(19,True,False)      #Shutdown
+ccClr = piGpio.gpioPin(26,True,False)   #Clear
+ccShd = piGpio.gpioPin(19,True,False)   #Shutdown
 
 #Initialize output values
 ccClr.off()
@@ -36,9 +34,32 @@ ccShd.off()
 
 #Setup interrupt handling
 def printIsr(self):
-    print("ISR!")
+    
+    #Establish count
+    count = 0
+
+    #Message that ISR is Triggered
+    print("ccInt went low - ISR!")
+
+    #Clear the interrupt on CC
+    ccClr.on()
+    ccClr.off()
+
+    #Check polarity
+    pol = ccPol.get()
+
+    #Increment the count in direction of polarity
+    if(pol>0):
+        count=count+1
+    else:
+        count=count-1
+    
+    ##TODO Create count var
     return
-ccInt.createInterrupt(True,printIsr,10)
+
+#Catch interrupt on falling edge per
+#(https://learn.sparkfun.com/tutorials/ltc4150-coulomb-counter-hookup-guide/all)
+ccInt.createInterrupt(False,printIsr,10)
 
 #Begin Periodic routine
 while True:
