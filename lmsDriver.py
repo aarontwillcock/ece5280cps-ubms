@@ -52,6 +52,7 @@ token = 0xDEAD
 uLoadReqArgs = (token,load1)
 #   Creating load request
 loadReq1 = ubmsLoad.uLoadReq(uLoadReqArgs)
+print(vars(loadReq1))
 
 #Create API call for UDP
 apiCall = ubmsComms.createAPIcall(1,loadReq1)
