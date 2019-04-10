@@ -91,6 +91,8 @@ def periodic():
         #Decode the request
         loadReq = ubmsLoad.uLoadReq(body)
 
+        print(vars(loadReq))
+
         #Determine if request can be fulfilled
         supplyError = ubmsSupply.isProblemToSupply(batt,loadReq)
 
