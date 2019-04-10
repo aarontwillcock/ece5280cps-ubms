@@ -67,7 +67,7 @@ BMS_PORT = 5218
 #Setup communications
 bmsComm = ubmsComms.uUDPComm(
             LMS_IP,LMS_PORT,    #Send-to-address
-            SELF_IP,BMS_PORT)    #Recv-from address
+            BMS_IP,BMS_PORT)    #Recv-from address
 
 #Tell LMS we are online
 bmsComm.udpSendMsg("BMS Online")

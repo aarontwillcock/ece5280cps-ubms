@@ -39,7 +39,7 @@ BMS_PORT = 5218
 #Setup communications
 bmsComm = ubmsComms.uUDPComm(
             BMS_IP,BMS_PORT,    #Send-to address
-            SELF_IP,LMS_PORT)    #Recv-from address
+            LMS_IP,LMS_PORT)    #Recv-from address
 
 #Create load
 uLoadArgs = (0,6,0,0.200,100,10,100)
