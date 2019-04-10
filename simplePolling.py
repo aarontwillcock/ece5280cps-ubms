@@ -2,6 +2,8 @@
 import RPi.GPIO as gpio
 import time
 
+#Clean up other programs
+gpio.cleanup()
 
 #Initialize gpio to use broadcomm numberings
 gpio.setmode(gpio.BCM)
