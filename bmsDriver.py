@@ -65,45 +65,47 @@ bmsComm.udpSetBlocking(True,True)
 #   Make receiving sock NON-blocking
 bmsComm.udpSetBlocking(False,False)
 
+#Create UDP data handler
+def handle(data):
+    #Extract API call from message
+    actionId, body = ubmsComms.extractAPIcall(data)
+
+    #Decode Call
+    #   Call is a load request
+    if(actionId == 1):
+        
+        #Decode the request
+        loadReq = ubmsLoad.uLoadReq(body)
+
+        print(loadReq.getValues())
+
+        #Determine if request can be fulfilled
+        supplyError = ubmsSupply.isProblemToSupply(batt,loadReq)
+
+        #Reply accordingly
+        loadReqReplyArgs = (loadReq.token,int(supplyError))
+        reply = ubmsLoad.uLoadReqReply(loadReqReplyArgs)
+
+        #Print out reply
+        print("Replying with: Token ",reply.token," Supply Error: ", reply.supplyError)
+
+        #Create API call
+        apiCall = ubmsComms.createAPIcall(2,reply)
+
+        #Send it!
+        bmsComm.udpSendMsg(apiCall)
+
 #Create Periodic Routine
 def periodic():
 
     #Try to receive message
-    try:
-        data, addr = bmsComm.udpRecvMsg(1024)
-        print(data)
+    data, addr = bmsComm.udpRecvMsg(1024)
+    print(data)
 
-        #Extract API call from message
-        actionId, body = ubmsComms.extractAPIcall(data)
-
-        #Decode Call
-        #   Call is a load request
-        if(actionId == 1):
-            
-            #Decode the request
-            loadReq = ubmsLoad.uLoadReq(body)
-
-            print(loadReq.getValues())
-
-            #Determine if request can be fulfilled
-            supplyError = ubmsSupply.isProblemToSupply(batt,loadReq)
-
-            #Reply accordingly
-            loadReqReplyArgs = (loadReq.token,int(supplyError))
-            reply = ubmsLoad.uLoadReqReply(loadReqReplyArgs)
-
-            #Print out reply
-            print("Replying with: Token ",reply.token," Supply Error: ", reply.supplyError)
-
-            #Create API call
-            apiCall = ubmsComms.createAPIcall(2,reply)
-
-            #Send it!
-            bmsComm.udpSendMsg(apiCall)
-
-    except socket.error, e:
-        print("No UDP data")
-        time.sleep(1)
+    #Handle if data returned
+    if(not(data == None) and not(addr == None)):
+        handle(data)
+    
 
 #Main loop
 #   Try-Except for keyboard interrupts

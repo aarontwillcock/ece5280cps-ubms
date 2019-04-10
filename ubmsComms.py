@@ -44,10 +44,12 @@ class uUDPComm:
     #General UDP Receive
     def udpRecvMsg(self,bufferSize):
 
-        #Receive message
-        msg, addr = self.lSock.recvfrom(bufferSize)
-
-        #Return values
+        
+        #Try to receive message
+        try:
+            msg, addr = self.lSock.recvfrom(bufferSize)
+        except socket.error, e:
+            msg, addr = None, None
         return msg, addr
 
     #Change blocking
