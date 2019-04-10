@@ -8,6 +8,7 @@ class uBatt:
         self.C = C
         self.mAh = mAh
         self.Imax = (self.mAh / 1000.0) * self.C
+        self.mAhConsumed = 0
 
 def canSupply(batt, loadReq):
     

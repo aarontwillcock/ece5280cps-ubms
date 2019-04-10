@@ -1,6 +1,9 @@
 #Dependencies
 import RPi.GPIO as gpio
 
+def cleanup():
+        gpio.cleanup()
+
 class gpioPin:
     def __init__(self,pin,out,enabled):
 
