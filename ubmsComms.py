@@ -48,7 +48,7 @@ class uUDPComm:
         #Try to receive message
         try:
             msg, addr = self.lSock.recvfrom(bufferSize)
-        except socket.error, e:
+        except:
             msg, addr = None, None
         return msg, addr
 
