@@ -110,4 +110,5 @@ for calls in apiCalls:
             #Update dictionary
             tad[loadReply.token] = True
 
+print("Done!")
 ##TODO: Execute the dictionary as time passes
