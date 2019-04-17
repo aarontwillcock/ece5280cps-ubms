@@ -115,5 +115,9 @@ for calls in apiCalls:
             #Print Rejection
             print("Load Req ", loadReply.token, "Rejected!")
 
+#Allow fan if it passed
+if(tad[0x0217] == True):
+    tpd[0x0217].on()
+
 print("Done!")
 ##TODO: Execute the dictionary as time passes
