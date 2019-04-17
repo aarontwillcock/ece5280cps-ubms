@@ -110,5 +110,10 @@ for calls in apiCalls:
             #Update dictionary
             tad[loadReply.token] = True
 
+        else:
+
+            #Print Rejection
+            print("Load Req ", loadReply.token, "Rejected!")
+
 print("Done!")
 ##TODO: Execute the dictionary as time passes
