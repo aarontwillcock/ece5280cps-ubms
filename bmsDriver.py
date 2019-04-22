@@ -30,8 +30,27 @@ batt = ubmsSupply.uBatt(4.8,1,1200)
 ccClr.on()
 
 #Setup coulomb count handling
+#   Setup time
+now = time.time()
+lastSampleTime = now
+mA_avg = 0
+
 #   Create ISR
 def printIsr(self):
+
+    #Establish Globals
+    global now
+    global lastSampleTime
+    global mA_avg
+
+    #Calculate current time
+    now = time.time()
+
+    #Calc mA avg
+    mA_avg = MAH_PER_INT / (now - lastSampleTime)
+
+    #Update "last" variables
+    lastSampleTime = now
 
     #Message that ISR is Triggered
     print("ccInt went low - ISR!")
@@ -111,37 +130,6 @@ def handle(data):
         #Send it!
         bmsComm.udpSendMsg(apiCall)
 
-#Average current calculation
-#   Variable Init
-now = time.time()
-lastSampleTime = now
-mAh_last = batt.mAhConsumed
-mA_avg = 0
-
-#   Create periodic timer interrupt
-def calcAvgI():
-
-    global lastSampleTime
-    global mA_avg
-    global mAh_last
-
-    #Calculate current time
-    now = time.time()
-
-    #Calculate change in time since last sample
-    dt = now - lastSampleTime
-
-    #Calculate change in mAh since last sample
-    dmAh = batt.mAhConsumed - mAh_last
-
-    #Calculate avg current
-    # mA = (mAh / s) * (s/h)
-    mA_avg = (dmAh / dt) * (3600/1)
-
-    #Update "last" variables
-    lastSampleTime = now
-    mAh_last = batt.mAhConsumed
-
 #Create Periodic Routine
 def periodic():
 
@@ -178,9 +166,6 @@ def periodic():
 
     print("Imin/Imax")
     print(Imin,"/",Imax)
-
-    #Calculate Current
-    calcAvgI()
 
     #Print avg current
     print(mA_avg)
