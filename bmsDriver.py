@@ -47,7 +47,8 @@ def printIsr(self):
     now = time.time()
 
     #Calc mA avg
-    mA_avg = MAH_PER_INT / (now - lastSampleTime)
+    #mA = mA * h / (s - s) = mA * h / s 
+    mA_avg = (MAH_PER_INT / (now - lastSampleTime)) * (3600/1)
 
     #Update "last" variables
     lastSampleTime = now
