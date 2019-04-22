@@ -157,7 +157,7 @@ def periodic():
         elif(activeLoadReqs.get(loadReqToken)):
 
             #Delete its key
-            del activeLoadReqs[loadReqToken]
+            activeLoadReqs.update({loadReqToken:0})
 
     #Calculate min, max current for all loads
     Imin = 0
@@ -166,8 +166,8 @@ def periodic():
     for activeLoadReqToken in activeLoadReqs:
 
         #Sum min/max current
-        Imin += acceptedLoadReqs.get(loadReqToken).Imax
-        Imax += acceptedLoadReqs.get(loadReqToken).Imin
+        Imin += acceptedLoadReqs.get(activeLoadReqToken).Imax
+        Imax += acceptedLoadReqs.get(activeLoadReqToken).Imin
 
     print("Imin/Imax")
     print(Imin,"/",Imax)
