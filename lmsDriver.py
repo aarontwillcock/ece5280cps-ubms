@@ -36,8 +36,8 @@ bmsComm = ubmsComms.uUDPComm(
 
 #Create Load Request Arg Sets
 #name       =           (Vmin,Vmax,Imin,Imax,releaseTime,duration,deadline,token)
-#Fan Load -         0-6V, 0-200 mA, 10 s from now, for 10 seconds, due 120s from release
-fanLoadArgs =           (0,6,0,0.200,10,10,120, 0x0217)
+#Fan Load -         0-6V, 0-500 mA, 10 s from now, for 10 seconds, due 120s from release
+fanLoadArgs =           (0,6,0,0.500,10,10,120, 0x0217)
 
 #Resistor Load      0-6V, 0-50mA, 30 s from now, for 60 sec, due 120s from release
 resLoadArgs =           (0,6,0,0.050,30,60,120, 0x3770)
@@ -69,27 +69,30 @@ tad = {
     }
 
 #Create arg list
-loadArgs = []
-loadArgs.append(fanLoadArgs)
-loadArgs.append(resLoadArgs)
-loadArgs.append(impossibleLoadArgs)
-loadArgs.append(dishonestLoad1Args)
-loadArgs.append(dishonestLoad2Args)
-loadArgs.append(dishonestLoad3Args)
+loadArgs = {}
+loadArgs.update({fanLoadArgs[7]:fanLoadArgs})
+loadArgs.update({resLoadArgs[7]:resLoadArgs})
+loadArgs.update({impossibleLoadArgs[7]:impossibleLoadArgs})
+loadArgs.update({dishonestLoad1Args[7]:dishonestLoad1Args})
+loadArgs.update({dishonestLoad2Args[7]:dishonestLoad2Args})
+loadArgs.update({dishonestLoad3Args[7]:dishonestLoad3Args})
 
 #Create Load Requests
-loadReqs = []
-for args in loadArgs:
-    loadReqs.append(ubmsLoad.uLoadReq(args))
+loadReqs = {}
+for token in loadArgs:
+    newLoadReq = ubmsLoad.uLoadReq(loadArgs.get(token))
+    loadReqs.update({newLoadReq.token:newLoadReq})
 
 #Create API calls
-apiCalls = []
-for requests in loadReqs:
-    apiCalls.append(ubmsComms.createAPIcall(1,requests))
+apiCalls = {}
+for token in loadReqs:
+    apiCalls.update({token:ubmsComms.createAPIcall(1,loadReqs.get(token))})
 
 #Send API calls (load requests) over UDP
-for calls in apiCalls:
-    bmsComm.udpSendMsg(calls)
+for token in apiCalls:
+
+    #Send API call referenced by token
+    bmsComm.udpSendMsg(apiCalls.get(token))
 
     #Wait for reply
     data, addr = bmsComm.udpRecvMsg(1024)
@@ -109,6 +112,12 @@ for calls in apiCalls:
             
             #Update dictionary
             tad[loadReply.token] = True
+
+            #Assign actual release time
+            loadReqs.get(loadReply.token).releaseTime += time.time()
+
+            #Assign actual deadline
+            loadReqs.get(loadReply.token).deadline += time.time()
 
         else:
 
