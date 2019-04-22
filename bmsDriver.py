@@ -170,8 +170,8 @@ def periodic():
         Imin += acceptedLoadReqs.get(activeLoadReqToken).Imin
         Imax += acceptedLoadReqs.get(activeLoadReqToken).Imax
 
-    print("Imin/Imax")
-    print(Imin,"/",Imax)
+    print("Imin/Imax mAh")
+    print(Imin*1000,"/",Imax*1000)
 
     #Print avg current
     print(mA_avg)
