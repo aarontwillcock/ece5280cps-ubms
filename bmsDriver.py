@@ -115,9 +115,11 @@ def handle(data):
             
             #Change the release and due time
             loadReq.releaseTime += time.time()
+            print("New rel time:", loadReq.releaseTime)
 
             #Change the due time
             loadReq.deadline += time.time() 
+            print("New deadline:", loadReq.deadline)
 
             #Log the accepted load requests
             acceptedLoadReqs.update({loadReq.token : loadReq})
