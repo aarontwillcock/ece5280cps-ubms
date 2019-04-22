@@ -121,6 +121,9 @@ mA_avg = 0
 #   Create periodic timer interrupt
 def calcAvgI():
 
+    global lastSampleTime
+    global mA_avg
+
     #Calculate current time
     now = time.time()
 
