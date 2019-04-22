@@ -113,7 +113,7 @@ for calls in apiCalls:
         else:
 
             #Print Rejection
-            print("Load Req ", hex(loadReply.token), "Rejected!")
+            print("Load Req ", hex(int(loadReply.token)), "Rejected!")
 
 #Allow fan if it passed
 if(tad[0x0217] == True):
