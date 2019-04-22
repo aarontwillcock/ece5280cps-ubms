@@ -144,6 +144,8 @@ def calcAvgI():
 #Create Periodic Routine
 def periodic():
 
+    global mA_avg
+
     #Calc current time
     now = time.time()
 
@@ -173,8 +175,14 @@ def periodic():
         Imin += acceptedLoadReqs.get(loadReqToken).Imax
         Imax += acceptedLoadReqs.get(loadReqToken).Imin
 
+    print("Imin/Imax")
+    print(Imin,"/",Imax)
+
     #Calculate Current
     calcAvgI()
+
+    #Print avg current
+    print(mA_avg)
 
     #Check for exceeding limits
     #   Find all active jobs
