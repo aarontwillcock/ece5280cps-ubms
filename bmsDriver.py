@@ -150,6 +150,8 @@ def periodic():
         if( acceptedLoadReqs.get(loadReqToken).releaseTime >= now
             and acceptedLoadReqs.get(loadReqToken).deadline < now):
 
+            print("adding active load!")
+
             #Flag load as active
             activeLoadReqs.update({loadReqToken:1})
         
@@ -166,8 +168,8 @@ def periodic():
     for activeLoadReqToken in activeLoadReqs:
 
         #Sum min/max current
-        Imin += acceptedLoadReqs.get(activeLoadReqToken).Imax
-        Imax += acceptedLoadReqs.get(activeLoadReqToken).Imin
+        Imin += acceptedLoadReqs.get(activeLoadReqToken).Imin
+        Imax += acceptedLoadReqs.get(activeLoadReqToken).Imax
 
     print("Imin/Imax")
     print(Imin,"/",Imax)
