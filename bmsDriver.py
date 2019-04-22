@@ -146,19 +146,18 @@ def periodic():
     #Activate loads if necessary
     for loadReqToken in acceptedLoadReqs:
 
+        print("Reviewing:",loadReqToken)
+
         #If accepted load request release time is now or later
         if( acceptedLoadReqs.get(loadReqToken).releaseTime >= now
             and acceptedLoadReqs.get(loadReqToken).deadline < now):
 
-            print("adding active load!")
-
             #Flag load as active
             activeLoadReqs.update({loadReqToken:1})
         
-        #Else, if accepted load request token exists in the active dictionary
-        elif(activeLoadReqs.get(loadReqToken)):
+        else:
 
-            #Delete its key
+            #Update its key
             activeLoadReqs.update({loadReqToken:0})
 
     #Calculate min, max current for all loads
