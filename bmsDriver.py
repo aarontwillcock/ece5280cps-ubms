@@ -115,7 +115,7 @@ def handle(data):
 #   Variable Init
 now = time.time()
 lastSampleTime = now
-lastSampleI = batt.mAhConsumed
+mAh_last = batt.mAhConsumed
 mA_avg = 0
 
 #   Create periodic timer interrupt
@@ -123,6 +123,7 @@ def calcAvgI():
 
     global lastSampleTime
     global mA_avg
+    global mAh_last
 
     #Calculate current time
     now = time.time()
@@ -130,16 +131,16 @@ def calcAvgI():
     #Calculate change in time since last sample
     dt = now - lastSampleTime
 
-    #Assign last
-    lastSampleTime = now
-
     #Calculate change in mAh since last sample
-    dmAh = batt.mAhConsumed - lastSampleI
+    dmAh = batt.mAhConsumed - mAh_last
 
     #Calculate avg current
     # mA = (mAh / s) * (s/h)
     mA_avg = (dmAh / dt) * (3600/1)
-    
+
+    #Update "last" variables
+    lastSampleTime = now
+    mAh_last = batt.mAhConsumed
 
 #Create Periodic Routine
 def periodic():
