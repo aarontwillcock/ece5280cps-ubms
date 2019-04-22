@@ -134,6 +134,8 @@ def handle(data):
 #Create Periodic Routine
 def periodic():
 
+    global acceptedLoadReqs
+    global activeLoadReqs
     global mA_avg
 
     #Calc current time
@@ -171,11 +173,6 @@ def periodic():
     #Print avg current
     print(mA_avg)
 
-    #Check for exceeding limits
-    #   Find all active jobs
-    #   Sum max I for all jobs
-    #   If max I of all jobs exceeds mA_avg, reject
-
     #Try to receive message
     data, addr = bmsComm.udpRecvMsg(1024)
 
@@ -183,10 +180,11 @@ def periodic():
     if(not(data == None) and not(addr == None)):
         handle(data)
         print(data)
-    
-    #TODO: Adjust the min, maximum current draws as time progresses
+
     #TODO: Enforce current boundaries
+    #Which load do we reject?
     #TODO: Enforce 
+    #Reject the load
 
     #Sleep
     time.sleep(1)
