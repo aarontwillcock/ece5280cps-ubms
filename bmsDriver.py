@@ -123,7 +123,7 @@ def handle(data):
             acceptedLoadReqs.update({loadReq.token : loadReq})
 
         #Print out reply
-        print("Replying with: Token ",reply.token," Supply Error: ", reply.supplyError)
+        print("Replying with: Token ",hex(int(reply.token))," Supply Error: ", reply.supplyError)
 
         #Create API call
         apiCall = ubmsComms.createAPIcall(2,reply)
