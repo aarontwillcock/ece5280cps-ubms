@@ -35,6 +35,7 @@ ccClr.on()
 now = time.time()
 lastSampleTime = now
 mA_avg = 0
+last_mA_avg = 0
 
 #   Create ISR
 def printIsr(self):
@@ -43,12 +44,14 @@ def printIsr(self):
     global now
     global lastSampleTime
     global mA_avg
+    global last_mA_avg
 
     #Calculate current time
     now = time.time()
 
     #Calc mA avg
     #mA = mA * h / (s - s) = mA * h / s 
+    last_mA_avg = mA_avg
     mA_avg = (MAH_PER_INT / (now - lastSampleTime)) * (3600/1)
 
     #Update "last" variables
@@ -142,7 +145,7 @@ def printActiveLoads():
 
     for token in activeLoadReqs:
         if(activeLoadReqs.get(token)):
-            print(token)
+            print(hex(int(token)))
 
 #Create Periodic Routine
 def periodic():
@@ -150,6 +153,7 @@ def periodic():
     global acceptedLoadReqs
     global activeLoadReqs
     global mA_avg
+    global last_mA_avg
 
     #Calc current time
     now = time.time()
@@ -177,16 +181,17 @@ def periodic():
     #Check if updated (time-adjusted) current is less than last ISR current
     mA_avg_update = (MAH_PER_INT / (now - lastSampleTime)) * (3600/1)
     if(mA_avg_update < mA_avg):
+        last_mA_avg = mA_avg
         mA_avg = mA_avg_update
 
     print("mA Avg: ",mA_avg)
 
     #Check Boundaries
-    if(mA_avg > Imax*1000):
+    if(mA_avg > Imax*1000 and mA_avg >= last_mA_avg):
         print("Hi I - Reject Loads:")
         printActiveLoads()
     
-    if(mA_avg < Imin*1000):
+    if(mA_avg < Imin*1000 and mA_avg <= last_mA_avg):
         print("Lo I - Reject Loads:")
         printActiveLoads()
 
