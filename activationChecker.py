@@ -15,3 +15,5 @@ def updateActiveLoads(acceptedLoadDict, activeLoadDict, now):
 
             #Update its key
             activeLoadDict.update({token:0})
+
+    return acceptedLoadDict, activeLoadDict

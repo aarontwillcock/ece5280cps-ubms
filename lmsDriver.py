@@ -124,7 +124,7 @@ def periodic():
     now = time.time()
 
     #Activate loads if necessary
-    activationChecker.updateActiveLoads(acceptedLoadReqs,activeLoadReqs,now)
+    acceptedLoadReqs, activeLoadReqs = activationChecker.updateActiveLoads(acceptedLoadReqs,activeLoadReqs,now)
 
     #Execute the dictionary as time passes
     #   for each active load request token

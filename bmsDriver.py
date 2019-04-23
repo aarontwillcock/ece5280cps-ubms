@@ -145,7 +145,7 @@ def periodic():
     now = time.time()
 
     #Activate loads if necessary
-    activationChecker.updateActiveLoads(acceptedLoadReqs,activeLoadReqs,now)
+    acceptedLoadReqs, activeLoadReqs = activationChecker.updateActiveLoads(acceptedLoadReqs,activeLoadReqs,now)
 
     #Calculate min, max current for all loads
     Imin = 0
