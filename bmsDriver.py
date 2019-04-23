@@ -158,6 +158,12 @@ def periodic():
     #Calc current time
     now = time.time()
 
+    #Check if updated (time-adjusted) current is less than last ISR current
+    mA_avg_update = (MAH_PER_INT / (now - lastSampleTime)) * (3600/1)
+    if(mA_avg_update < mA_avg):
+        last_mA_avg = mA_avg
+        mA_avg = mA_avg_update
+
     #Activate loads if necessary
     acceptedLoadReqs, activeLoadReqs = activationChecker.updateActiveLoads(acceptedLoadReqs,activeLoadReqs,now)
 
@@ -177,13 +183,6 @@ def periodic():
     print(now)
     print("Imin/Imax mAh")
     print(Imin*1000,"/",Imax*1000)
-
-    #Check if updated (time-adjusted) current is less than last ISR current
-    mA_avg_update = (MAH_PER_INT / (now - lastSampleTime)) * (3600/1)
-    if(mA_avg_update < mA_avg):
-        last_mA_avg = mA_avg
-        mA_avg = mA_avg_update
-
     print("mA Avg: ",mA_avg)
 
     #Check Boundaries
