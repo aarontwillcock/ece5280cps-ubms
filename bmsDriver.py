@@ -142,7 +142,7 @@ def printActiveLoads():
 
     for token in activeLoadReqs:
         if(activeLoadReqs.get(token)):
-            print(acceptedLoadReqs.get(token))
+            print(token)
 
 #Create Periodic Routine
 def periodic():
@@ -181,6 +181,17 @@ def periodic():
 
     print("mA Avg: ",mA_avg)
 
+    #Check Boundaries
+    if(mA_avg > Imax*1000):
+        print("Hi I - Reject Loads:")
+        printActiveLoads()
+    
+    if(mA_avg < Imin*1000):
+        print("Lo I - Reject Loads:")
+        printActiveLoads()
+
+    #TODO:Reject the load
+
     #Try to receive message
     data, addr = bmsComm.udpRecvMsg(1024)
 
@@ -188,17 +199,6 @@ def periodic():
     if(not(data == None) and not(addr == None)):
         handle(data)
         print(data)
-
-    #Check Boundaries
-    if(mA_avg > Imax):
-        print("Hi I - Reject Loads:")
-        printActiveLoads()
-    
-    if(mA_avg < Imin):
-        print("Lo I - Reject Loads:")
-        printActiveLoads()
-
-    #Reject the load
 
     #Sleep
     time.sleep(1)
