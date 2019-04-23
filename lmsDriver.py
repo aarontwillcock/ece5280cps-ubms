@@ -131,12 +131,12 @@ def periodic():
     for token in activeLoadReqs:
 
         #If load is active
-        if(activeLoadReqs.get(token)):
+        if(activeLoadReqs.get(token) and token in loadPin.keys()):
 
             #Turn on pin (allowing current flow)
             loadPin.get(token).on()
 
-        else:
+        elif(token in loadPin.keys()):
 
             #Else, turn off pin
             loadPin.get(token).off()
