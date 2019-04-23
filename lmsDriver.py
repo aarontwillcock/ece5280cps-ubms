@@ -39,7 +39,7 @@ dishonestLoad3Args =    (0,6,0,0.014,40,10,100, 0xCACA)     #Load will be too li
 #Impossible Load    12-24V, 0-100A, 0s from now, for 60 sec, due 1000s after release
 impossibleLoadArgs =    (12,24,0,100,0,60,1000, 0xDEAD)
 
-#Create arg list
+#Create dictionary of arguments
 loadArgs = {}
 loadArgs.update({fanLoadArgs[7]:fanLoadArgs})
 loadArgs.update({resLoadArgs[7]:resLoadArgs})
@@ -48,25 +48,30 @@ loadArgs.update({dishonestLoad2Args[7]:dishonestLoad2Args})
 loadArgs.update({dishonestLoad3Args[7]:dishonestLoad3Args})
 loadArgs.update({impossibleLoadArgs[7]:impossibleLoadArgs})
 
-#Create a hardware list
-pinList = {}
-pinList.update({fanLoadArgs[7]:fanLoadPin})
-pinList.update({resLoadArgs[7]:resLoadPin})
-pinList.update({dishonestLoad1Args[7]:dishonestLoad1Pin})
-pinList.update({dishonestLoad2Args[7]:dishonestLoad2Pin})
-pinList.update({dishonestLoad3Args[7]:dishonestLoad3Pin})
+#Create a dictionary of hardware (pins)
+loadPin = {}
+loadPin.update({fanLoadArgs[7]:fanLoadPin})
+loadPin.update({resLoadArgs[7]:resLoadPin})
+loadPin.update({dishonestLoad1Args[7]:dishonestLoad1Pin})
+loadPin.update({dishonestLoad2Args[7]:dishonestLoad2Pin})
+loadPin.update({dishonestLoad3Args[7]:dishonestLoad3Pin})
 
-#Create Token-Accepted dictionary
-tad = {}
-#Initialize all entries to 0, False, Not accepted)
-for token in loadArgs:
-    tad.update({token : 0})
-
-#Create Load Requests
+#Create dictionary of load requests
 loadReqs = {}
 for token in loadArgs:
     newLoadReq = ubmsLoad.uLoadReq(loadArgs.get(token))
     loadReqs.update({newLoadReq.token:newLoadReq})
+
+#Create dictionary of accepted load requests
+acceptedLoadReqs = {}
+
+#Create dictionary of active load requests
+activeLoadReqs = {}
+
+#Initialize all accepted, active entries to 0, False, Not accepted)
+for token in loadArgs:
+    acceptedLoadReqs.update({token : 0})
+    activeLoadReqs.update({token : 0})
 
 #Create API calls
 apiCalls = {}
@@ -96,7 +101,7 @@ for token in apiCalls:
         if(not loadReply.supplyError):
             
             #Update dictionary
-            tad.update({loadReply.token : 1})
+            acceptedLoadReqs.update({loadReply.token : 1})
 
             #Assign actual release time
             loadReqs.get(loadReply.token).releaseTime += time.time()
@@ -112,10 +117,33 @@ for token in apiCalls:
 
 #Periodic loop
 def periodic():
-    print("Hello")
-    time.sleep(1)
 
-##TODO: Execute the dictionary as time passes
+    global acceptedLoadReqs
+    global activeLoadReqs
+
+    #Get current time
+    now = time.time()
+
+    #Activate loads if necessary
+    activationChecker.updateActiveLoads(acceptedLoadReqs,activeLoadReqs,now)
+
+    #Execute the dictionary as time passes
+    #   for each active load request token
+    for token in activeLoadReqs:
+
+        #If load is active
+        if(activeLoadReqs.get(token)):
+
+            #Turn on pin (allowing current flow)
+            loadPin.get(token).on()
+
+        else:
+
+            #Else, turn off pin
+            loadPin.get(token).off()
+
+    #Wait for next period
+    time.sleep(1)
 
 #Main loop
 #   Try-Except for keyboard interrupts
