@@ -43,7 +43,7 @@ vLoArgs =   ( 0, 2,0,100,0,60,1000, 0xDED2)
 iHiArgs =   ( 0, 6,7,100,0,60,1000, 0xDED3)
 #   Honest, supplyable loads
 #       Fan Load - Starts 10 sec after approval, lasts for 10 seconds
-fanLoadArgs =   (0,6,0,0.500,10,10,10, 0x0217)
+fanLoadArgs =   (0,6,0,0.500,10,120,120, 0x0217)
 #   Dishonest (or honest but compromised) loads
 #       120 Ohm Resistor Load - starts 30 sec after approval, lasts for 90 sec
 resLoadArgs =   (0,6,0,0.045,30,90,90, 0x3770)
