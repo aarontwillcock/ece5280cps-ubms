@@ -33,7 +33,7 @@ ccClr.on()
 #Setup coulomb count handling
 #   Setup time
 now = time.time()
-lastSampleTime = now
+lastSampleTime = 0
 mA_avg = 0
 
 #   Create ISR
