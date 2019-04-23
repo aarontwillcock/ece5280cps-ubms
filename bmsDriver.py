@@ -106,7 +106,7 @@ def handle(data):
 
         #Print Supply error
         if(supplyError):
-            ubmsSupply.printSupplyError(supplyError)
+            print(ubmsSupply.getSupplyError(supplyError))
 
         #Reply accordingly
         loadReqReplyArgs = (loadReq.token,int(supplyError))

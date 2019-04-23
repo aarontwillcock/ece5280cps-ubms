@@ -35,7 +35,7 @@ def isProblemToSupply(batt, loadReq):
     #All clear
     return 0
 
-def printSupplyError(error):
+def getSupplyError(error):
     errorList=[
         "No error",
         "Voltage out of range",

@@ -28,7 +28,7 @@ vLoArgs =       ( 0, 2,0.000,0.001,0,60,1000, 0xDED2)   #Voltage too low
 iHiArgs =       ( 0, 6,7.000,100.0,0,60,1000, 0xDED3)   #Current too high
 #   Honest, supplyable loads
 fanLoadArgs =   ( 0, 6,0.000,0.500,10,10,10, 0x0217)    #Fan Load
-resLoadArgs =   ( 0, 6,0.000,0.045,30,15,15, 0x3770)    #100 Ohm Resistive Load
+resLoadArgs =   ( 0, 6,0.000,0.052,30,15,15, 0x3770)    #100 Ohm Resistive Load
 #   Dishonest loads
 badFanLoad1Args=( 0, 6,0.450,0.500,60,15,15, 0xBAD1)    #Claims minimum 400 mA, doesn't draw (undercurrent)
 badFanLoad2Args=( 0, 6,0.000,0.300,90,15,15, 0xBAD2)    #Claims max 300 mA, draws more (overcurrent)
