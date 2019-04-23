@@ -25,16 +25,16 @@ bmsComm = ubmsComms.uUDPComm(
 
 #Create Load Request Arg Sets
 #name       =           (Vmin,Vmax,Imin,Imax,releaseTime,duration,deadline,token)
-#Fan Load -         0-6V, 0-500 mA, 10 s from now, for 10 seconds, due 120s from release
-fanLoadArgs =           (0,6,0,0.500,10,10,120, 0x0217)
+#Fan Load -         0-6V, 0-500 mA, 10 s from now, for 30 seconds, due 120s from release
+fanLoadArgs =           (0,6,0,0.500,10,30,30, 0x0217)
 
 #Resistor Load      0-6V, 0-50mA, 30 s from now, for 60 sec, due 120s from release
-resLoadArgs =           (0,6,0,0.050,30,60,120, 0x3770)
+resLoadArgs =           (0,6,0,0.050,30,30,30, 0x3770)
 
 #DishonestLoads    All are 0-6V, 0-14mA, 40s from now, for 10s, due 100s from release
-dishonestLoad1Args =    (0,6,0,0.014,40,10,100, 0xBEEF)     #Load will be drawn too early
-dishonestLoad2Args =    (0,6,0,0.014,40,10,100, 0xBAAD)     #Load will be too large
-dishonestLoad3Args =    (0,6,0,0.014,40,10,100, 0xCACA)     #Load will be too little
+dishonestLoad1Args =    (0,6,0,0.014,40,10,10, 0xBEEF)     #Load will be drawn too early
+dishonestLoad2Args =    (0,6,0,0.014,40,10,10, 0xBAAD)     #Load will be too large
+dishonestLoad3Args =    (0,6,0,0.014,40,10,10, 0xCACA)     #Load will be too little
 
 #Impossible Load    12-24V, 0-100A, 0s from now, for 60 sec, due 1000s after release
 impossibleLoadArgs =    (12,24,0,100,0,60,1000, 0xDEAD)
@@ -159,4 +159,6 @@ try:
 
 #   If interrupted, cleanup GPIO
 except KeyboardInterrupt:
+    for tokens in loadPin:
+        loadPin.get(token).off()
     piGpio.cleanup()
