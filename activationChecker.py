@@ -5,8 +5,8 @@ def updateActiveLoads(acceptedLoadDict, activeLoadDict, now):
     for token in acceptedLoadDict:
 
         #If accepted load request release time is now or earlier and we haven't missed deadline
-        if( acceptedLoadDict.get(token).releaseTime >= now
-            and acceptedLoadDict.get(token).deadline > now):
+        if( acceptedLoadDict.get(token).releaseTime <= now
+            and now < acceptedLoadDict.get(token).deadline):
 
             #Flag load as active
             activeLoadDict.update({token:1})
