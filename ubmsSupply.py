@@ -35,6 +35,17 @@ def isProblemToSupply(batt, loadReq):
     #All clear
     return 0
 
+def printSupplyError(error):
+    errorList=[
+        "No error",
+        "Voltage out of range",
+        "Batt cannot support min current",
+        "Batt cannot support max current",
+        "Current sched cannot support min energy draw",
+        "Current sched cannot support max energy draw"
+    ]
+
+    return errorList[error]
     
         
 

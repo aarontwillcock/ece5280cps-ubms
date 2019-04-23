@@ -104,6 +104,10 @@ def handle(data):
         #Determine if request can be fulfilled
         supplyError = ubmsSupply.isProblemToSupply(batt,loadReq)
 
+        #Print Supply error
+        if(supplyError):
+            ubmsSupply.printSupplyError(supplyError)
+
         #Reply accordingly
         loadReqReplyArgs = (loadReq.token,int(supplyError))
         reply = ubmsLoad.uLoadReqReply(loadReqReplyArgs)
@@ -131,6 +135,15 @@ def handle(data):
         #Send it!
         bmsComm.udpSendMsg(apiCall)
 
+#Print active loads:
+def printActiveLoads():
+    global acceptedLoadReqs
+    global activeLoadReqs
+
+    for token in activeLoadReqs:
+        if(activeLoadReqs.get(token)):
+            print(acceptedLoadReqs.get(token))
+
 #Create Periodic Routine
 def periodic():
 
@@ -156,7 +169,7 @@ def periodic():
             #Sum min/max current
             Imin += acceptedLoadReqs.get(token).Imin
             Imax += acceptedLoadReqs.get(token).Imax
-            
+
     print(now)
     print("Imin/Imax mAh")
     print(Imin*1000,"/",Imax*1000)
@@ -172,9 +185,15 @@ def periodic():
         handle(data)
         print(data)
 
-    #TODO: Enforce current boundaries
-    #Which load do we reject?
-    #TODO: Enforce 
+    #Check Boundaries
+    if(mA_avg > Imax):
+        print("Hi I - Reject Loads:")
+        printActiveLoads()
+    
+    if(mA_avg < Imin):
+        print("Lo I - Reject Loads:")
+        printActiveLoads()
+
     #Reject the load
 
     #Sleep
