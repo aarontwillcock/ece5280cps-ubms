@@ -47,10 +47,6 @@ def printIsr(self):
     #Calculate current time
     now = time.time()
 
-    #Calc mA avg
-    #mA = mA * h / (s - s) = mA * h / s 
-    mA_avg = (MAH_PER_INT / (now - lastSampleTime)) * (3600/1)
-
     #Update "last" variables
     lastSampleTime = now
 
@@ -143,7 +139,10 @@ def periodic():
 
     #Calc current time
     now = time.time()
-    print(acceptedLoadReqs)
+
+    #Calc avg current
+    mA_avg = (MAH_PER_INT / (now - lastSampleTime)) * (3600/1)
+
     #Activate loads if necessary
     acceptedLoadReqs, activeLoadReqs = activationChecker.updateActiveLoads(acceptedLoadReqs,activeLoadReqs,now)
 
