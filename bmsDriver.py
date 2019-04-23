@@ -205,6 +205,9 @@ def periodic():
         handle(data)
         print(data)
 
+    #Visually terminate this sample's printout
+    print("-----")
+
     #Sleep
     time.sleep(1)
 
