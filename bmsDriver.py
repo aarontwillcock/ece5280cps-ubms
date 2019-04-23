@@ -54,9 +54,6 @@ def printIsr(self):
     #Update "last" variables
     lastSampleTime = now
 
-    #Message that ISR is Triggered
-    print("ccInt went low - ISR!")
-
     #Check polarity
     pol = ccPol.get()
 

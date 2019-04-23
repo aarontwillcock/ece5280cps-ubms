@@ -6,9 +6,9 @@ CC_CLR_PIN = 19 #Coulomb Counter Interrupt Clear
 #   LMS
 FAN_PIN = 14    #Fan Control
 RES_PIN = 15    #Resistor control
-DH1_PIN = 21    #Dishonest load 1 - 330 Ohm
-DH2_PIN = 20    #Dishonest load 2 - 010 Ohm
-DH3_PIN = 16    #Dishonest load 3 - 010 Ohm
+DH1_PIN = 21    #Dishonest load 1 - 330 Ohm bypass
+DH2_PIN = 20    #Dishonest load 2 - 010 Ohm bypass
+DH3_PIN = 16    #Dishonest load 3 - 010 Ohm bypass
 
 #IP Defines
 LMS_IP = "192.168.1.217"

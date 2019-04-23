@@ -11,10 +11,16 @@ import activationChecker#Updates activity status of load requests
 
 #Setup hardware
 fanLoadPin = piGpio.gpioPin(PIPPDefs.FAN_PIN,True,False)        #Fan
-resLoadPin = piGpio.gpioPin(PIPPDefs.RES_PIN,True,False)        # 100 Ohm
-dishonestLoad1Pin = piGpio.gpioPin(PIPPDefs.DH1_PIN,True,False) # 330 Ohm
-dishonestLoad2Pin = piGpio.gpioPin(PIPPDefs.DH2_PIN,True,False) # 010 Ohm
-dishonestLoad3Pin = piGpio.gpioPin(PIPPDefs.DH3_PIN,True,False) # 010 Ohm
+resLoadPin = piGpio.gpioPin(PIPPDefs.RES_PIN,True,False)        # Allow current thru resistors (350 Ohm total)
+dishonestLoad1Pin = piGpio.gpioPin(PIPPDefs.DH1_PIN,True,False) # Bypass 330 Ohm resistor
+dishonestLoad2Pin = piGpio.gpioPin(PIPPDefs.DH2_PIN,True,False) # Bypass 010 Ohm resistor
+dishonestLoad3Pin = piGpio.gpioPin(PIPPDefs.DH3_PIN,True,False) # Bypass 010 Ohm resistor
+
+#Hardware example:
+#res + DHL1 + DHL2 + DHL3 = 0 Ohm
+#res + DHL1 + DHL2 = 10 Ohm
+#res + DHL1 = 20 Ohm
+#res = 350 Ohm
 
 #Setup communications
 bmsComm = ubmsComms.uUDPComm(
