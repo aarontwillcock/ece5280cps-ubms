@@ -151,11 +151,14 @@ def periodic():
     Imin = 0
     Imax = 0
 
-    for activeLoadReqToken in activeLoadReqs:
+    for token in activeLoadReqs:
 
-        #Sum min/max current
-        Imin += acceptedLoadReqs.get(activeLoadReqToken).Imin
-        Imax += acceptedLoadReqs.get(activeLoadReqToken).Imax
+        #If load should be active
+        if(activeLoadReqs.get(token)):
+
+            #Sum min/max current
+            Imin += acceptedLoadReqs.get(token).Imin
+            Imax += acceptedLoadReqs.get(token).Imax
 
     print("Imin/Imax mAh")
     print(Imin*1000,"/",Imax*1000)
