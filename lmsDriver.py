@@ -99,9 +99,10 @@ activeLoadReqs = {}
 tokenNames = {}
 tokenNames.update({0x0217:"Fan   "})
 tokenNames.update({0x3770:"RLoad "})
-tokenNames.update({0x3770:"Res100"})
-tokenNames.update({0xBAAD:"Res10a"})
+tokenNames.update({0x2137:"Res100"})
+tokenNames.update({0xBAD1:"Res10a1"})
 tokenNames.update({0xCACA:"Res10b"})
+tokenNames.update({0xBAD2:"Res10a2"})
 
 #Initialize all active entries to 0, False, Not accepted)
 for token in loadArgs:
