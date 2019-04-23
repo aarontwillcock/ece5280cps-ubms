@@ -10,11 +10,11 @@ import PIPPDefs         #Pin, IP, and Port defines
 import activationChecker#Updates activity status of load requests
 
 #Setup hardware
-fanLoadPin = piGpio.gpioPin(PIPPDefs.FAN_PIN,True,False)
-resLoadPin = piGpio.gpioPin(PIPPDefs.RES_PIN,True,False)
-dishonestLoad1Pin = piGpio.gpioPin(PIPPDefs.DH1_PIN,True,False)
-dishonestLoad2Pin = piGpio.gpioPin(PIPPDefs.DH2_PIN,True,False)
-dishonestLoad3Pin = piGpio.gpioPin(PIPPDefs.DH3_PIN,True,False)
+fanLoadPin = piGpio.gpioPin(PIPPDefs.FAN_PIN,True,False)        #Fan
+resLoadPin = piGpio.gpioPin(PIPPDefs.RES_PIN,True,False)        # 100 Ohm
+dishonestLoad1Pin = piGpio.gpioPin(PIPPDefs.DH1_PIN,True,False) # 330 Ohm
+dishonestLoad2Pin = piGpio.gpioPin(PIPPDefs.DH2_PIN,True,False) # 010 Ohm
+dishonestLoad3Pin = piGpio.gpioPin(PIPPDefs.DH3_PIN,True,False) # 010 Ohm
 
 #Setup communications
 bmsComm = ubmsComms.uUDPComm(
