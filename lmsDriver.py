@@ -96,7 +96,7 @@ for token in apiCalls:
         if(not loadReply.supplyError):
             
             #Update dictionary
-            tad[loadReply.token] = True
+            tad.update({loadReply.token : 1})
 
             #Assign actual release time
             loadReqs.get(loadReply.token).releaseTime += time.time()
