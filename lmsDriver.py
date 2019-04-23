@@ -100,8 +100,8 @@ for token in apiCalls:
         #Check if load was accepted
         if(not loadReply.supplyError):
             
-            #Update dictionary
-            acceptedLoadReqs.update({loadReply.token : 1})
+            #Update dictionary with accepted load request
+            acceptedLoadReqs.update({loadReply.token : loadReqs.get(loadReply.token)})
 
             #Assign actual release time
             loadReqs.get(loadReply.token).releaseTime += time.time()
