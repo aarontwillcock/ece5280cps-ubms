@@ -43,19 +43,21 @@ vLoArgs =   ( 0, 2,0,100,0,60,1000, 0xDED2)
 iHiArgs =   ( 0, 6,7,100,0,60,1000, 0xDED3)
 #   Honest, supplyable loads
 #       Fan Load - Starts 10 sec after approval, lasts for 10 seconds
-fanLoadArgs =   (0,6,0,0.500,10,120,120, 0x0217)
+fanLoadArgs =   (0,6,0,0.500,10,10,10, 0x0217)
 #   Dishonest (or honest but compromised) loads
-#       120 Ohm Resistor Load - starts 30 sec after approval, lasts for 90 sec
+#       Enable the resistive load for 90 seconds
 resLoadArgs =   (0,6,0,0.045,30,90,90, 0x3770)
-#       10 Ohm Resistive load drop (120 ohms above becomes 110 ohms)
-#           Starts 45 sec after approval lasts for 15 sec
+#       Short around 100 ohm resistor for 60 sec - Leaving 20 Ohm resistance
+res100DropArgs =    (0,6,0,0.260,30,60,60, 0x2137)
+#       Short around 10 oHm load (20 ohms above becomes 10 ohms)
 #           This load claims to not increase current (but will)
-res10aDropArgs =    (0,6,0,0,45,15,15, 0xBAAD)
+res10aDropArgs1 =    (0,6,0,0,60,15,15, 0xBAD1)
 #       10 Ohm Resistive load drop (110 ohms above becomes 100 ohms)
 #           Starts 75 sec after approval, lasts for 15 sec
+#           Short around both 10 oHm loads (leaving 100 ohms resistance)
 #           This load claims to draw a minimum of 500ma (but only draws ~50)
-res10bDropArgs =    (0,6,0.5,0.7,75,15,15, 0xCACA)
-
+res10bDropArgs =    (0,6,0.5,0.7,105,15,15, 0xCACA)
+res10aDropArgs2 =    (0,6,0,0,105,15,15, 0xBAD2)
 
 #Create dictionary of arguments
 loadArgs = {}
@@ -67,16 +69,19 @@ loadArgs.update({iHiArgs[7]:iHiArgs})
 loadArgs.update({fanLoadArgs[7]:fanLoadArgs})
 #   Dishonest (or honest and compromised loads)
 loadArgs.update({resLoadArgs[7]:resLoadArgs})
-loadArgs.update({res10aDropArgs[7]:res10aDropArgs})
+loadArgs.update({res100DropArgs[7]:res100DropArgs})
+loadArgs.update({res10aDropArgs1[7]:res10aDropArgs1})
 loadArgs.update({res10bDropArgs[7]:res10bDropArgs})
+loadArgs.update({res10aDropArgs2[7]:res10aDropArgs2})
 
 #Create a dictionary of hardware (pins)
 loadPin = {}
 loadPin.update({fanLoadArgs[7]:fanLoadPin})
 loadPin.update({resLoadArgs[7]:resLoadPin})
-loadPin.update({resLoadArgs[7]:r_100})
-loadPin.update({res10aDropArgs[7]:r_10a})
+loadPin.update({res100DropArgs[7]:r_100})
+loadPin.update({res10aDropArgs1[7]:r_10a})
 loadPin.update({res10bDropArgs[7]:r_10b})
+loadPin.update({res10aDropArgs2[7]:r_10a})
 
 #Create dictionary of load requests
 loadReqs = {}
@@ -93,7 +98,8 @@ activeLoadReqs = {}
 #Create dictionary of load names
 tokenNames = {}
 tokenNames.update({0x0217:"Fan   "})
-tokenNames.update({0x3770:"Res   "})
+tokenNames.update({0x3770:"RLoad "})
+tokenNames.update({0x3770:"Res100"})
 tokenNames.update({0xBAAD:"Res10a"})
 tokenNames.update({0xCACA:"Res10b"})
 

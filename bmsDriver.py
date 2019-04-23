@@ -65,7 +65,7 @@ def printIsr(self):
     batt.mAhConsumed += MAH_PER_INT
 
     #Print mAh consumed
-    print("Consumed ", batt.mAhConsumed, " mAh")
+    #print("Consumed ", batt.mAhConsumed, " mAh")
 
     #Done
     return
