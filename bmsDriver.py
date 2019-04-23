@@ -33,7 +33,8 @@ ccClr.on()
 #Setup coulomb count handling
 #   Setup time
 now = time.time()
-lastSampleTime = 0
+lastLastSampleTime = 0
+lastSampleTime = now
 mA_avg = 0
 
 #   Create ISR
@@ -42,12 +43,14 @@ def printIsr(self):
     #Establish Globals
     global now
     global lastSampleTime
+    global lastLastSampleTime
     global mA_avg
 
     #Calculate current time
     now = time.time()
 
     #Update "last" variables
+    lastLastSampleTime = lastSampleTime
     lastSampleTime = now
 
     #Message that ISR is Triggered
@@ -141,7 +144,7 @@ def periodic():
     now = time.time()
 
     #Calc avg current
-    mA_avg = (MAH_PER_INT / (now - lastSampleTime)) * (3600/1)
+    mA_avg = (2*MAH_PER_INT / (now - lastLastSampleTime)) * (3600/1)
 
     #Activate loads if necessary
     acceptedLoadReqs, activeLoadReqs = activationChecker.updateActiveLoads(acceptedLoadReqs,activeLoadReqs,now)
