@@ -174,7 +174,11 @@ def periodic():
     print("Imin/Imax mAh")
     print(Imin*1000,"/",Imax*1000)
 
-    #Print avg current
+    #Check if updated (time-adjusted) current is less than last ISR current
+    mA_avg_update = (MAH_PER_INT / (now - lastSampleTime)) * (3600/1)
+    if(mA_avg_update < mA_avg):
+        mA_avg = mA_avg_update
+
     print("mA Avg: ",mA_avg)
 
     #Try to receive message
