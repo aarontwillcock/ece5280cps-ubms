@@ -99,15 +99,15 @@ for token in apiCalls:
         #Check if load was accepted
         if(not loadReply.supplyError):
             
-            #Update dictionary with accepted load request
-            acceptedLoadReqs.update({loadReply.token : loadReqs.get(loadReply.token)})
-
             #Assign actual release time
             loadReqs.get(loadReply.token).releaseTime += time.time()
 
-            #Assign actual deadline
-            loadReqs.get(loadReply.token).deadline += time.time()
+            #Assign actual deadline (recall deadlines are relative offsets)
+            loadReqs.get(loadReply.token).deadline += loadReqs.get(loadReply.token).releaseTime
 
+            #Update dictionary with accepted load request
+            acceptedLoadReqs.update({loadReply.token : loadReqs.get(loadReply.token)})
+            
         else:
 
             #Print Rejection

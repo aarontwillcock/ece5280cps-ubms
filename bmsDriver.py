@@ -118,8 +118,8 @@ def handle(data):
             loadReq.releaseTime += time.time()
             print("New rel time:", loadReq.releaseTime)
 
-            #Change the due time
-            loadReq.deadline += time.time() 
+            #Change the due time (recall deadlines are relative offsets)
+            loadReq.deadline += loadReq.releaseTime
             print("New deadline:", loadReq.deadline)
 
             #Log the accepted load requests
@@ -143,7 +143,7 @@ def periodic():
 
     #Calc current time
     now = time.time()
-
+    print(acceptedLoadReqs)
     #Activate loads if necessary
     acceptedLoadReqs, activeLoadReqs = activationChecker.updateActiveLoads(acceptedLoadReqs,activeLoadReqs,now)
 
