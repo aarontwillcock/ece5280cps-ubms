@@ -132,6 +132,7 @@ def periodic():
     acceptedLoadReqs, activeLoadReqs = activationChecker.updateActiveLoads(acceptedLoadReqs,activeLoadReqs,now)
 
     #Execute the dictionary as time passes
+    pinsToEnable = 0b00
     #   for each active load request token
     for token in activeLoadReqs:
 
@@ -141,14 +142,26 @@ def periodic():
             #Alert user:
             print(hex(int(token)),tokenNames.get(token)," active")
 
-            #Turn on pin (allowing current flow)
-            loadPin.get(token).on()
+            #Add pin to list to be enabled
+            if(loadPin.get(token) == fanLoadPin):
+                pinsToEnable |= 0b10
+            else:
+                pinsToEnable |= 0b01
 
-        elif(token in loadPin.keys()):
+        else:
 
-            #Else, turn off pin
-            loadPin.get(token).off()
             print(hex(int(token)),tokenNames.get(token)," inactive")
+
+    #Execute
+    if(pinsToEnable&0b10):
+        fanLoadPin.on()
+    else:
+        fanLoadPin.off()
+    
+    if(pinsToEnable&0b01):
+        resLoadPin.on()
+    else:
+        resLoadPin.off()
 
     print("-----")
 
