@@ -107,7 +107,7 @@ for token in apiCalls:
 
             #Update dictionary with accepted load request
             acceptedLoadReqs.update({loadReply.token : loadReqs.get(loadReply.token)})
-            
+
         else:
 
             #Print Rejection
@@ -143,6 +143,7 @@ def periodic():
 
             #Else, turn off pin
             loadPin.get(token).off()
+            print(hex(int(token))," inactive")
 
     #Wait for next period
     time.sleep(1)
