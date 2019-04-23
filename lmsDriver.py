@@ -12,16 +12,6 @@ import activationChecker#Updates activity status of load requests
 #Setup hardware
 fanLoadPin = piGpio.gpioPin(PIPPDefs.FAN_PIN,True,False)        #Fan
 resLoadPin = piGpio.gpioPin(PIPPDefs.RES_PIN,True,False)        # Allow current thru resistors (350 Ohm total)
-r_100 = piGpio.gpioPin(PIPPDefs.DH1_PIN,True,False) # Bypass 100 Ohm resistor
-r_10a = piGpio.gpioPin(PIPPDefs.DH2_PIN,True,False) # Bypass 010 Ohm resistor
-r_10b = piGpio.gpioPin(PIPPDefs.DH3_PIN,True,False) # Bypass 010 Ohm resistor
-
-
-#Hardware example:
-#res + DHL1 + DHL2 + DHL3 = 0 Ohm
-#res + DHL1 + DHL2 = 10 Ohm
-#res + DHL1 = 20 Ohm
-#res = 120 Ohm
 
 #Setup communications
 bmsComm = ubmsComms.uUDPComm(
@@ -37,13 +27,12 @@ vHiArgs =       (12,24,0.000,0.001,0,60,1000, 0xDED1)   #Voltage too high
 vLoArgs =       ( 0, 2,0.000,0.001,0,60,1000, 0xDED2)   #Voltage too low
 iHiArgs =       ( 0, 6,7.000,100.0,0,60,1000, 0xDED3)   #Current too high
 #   Honest, supplyable loads
-fanLoadArgs =   ( 0, 6,0.000,0.500,10,10,10, 0x0217)    #Fan        10 sec to 20 sec
-#   Dishonest (or honest but compromised) loads
-resLoadArgs =   ( 0, 6,0.000,0.045,30,90,90, 0x3770)    #Res load   30 sec to 120 sec
-res100DropArgs =( 0, 6,0.000,0.260,30,60,60, 0x2137)    #Short res load to 20 ohms
-res10aDropArgs1=( 0, 6,0.000,0.000,60,15,15, 0xBAD1)    #Short res load to 10 ohms
-res10bDropArgs =( 0, 6,0.500,0.700,105,15,15, 0xCACA)   #Short both 10 ohm resistors
-res10aDropArgs2=( 0, 6,0.000,0.000,105,15,15, 0xBAD2)   #Short both 10 ohm resistors
+fanLoadArgs =   ( 0, 6,0.000,0.500,10,10,10, 0x0217)    #Fan Load
+resLoadArgs =   ( 0, 6,0.000,0.045,30,15,15, 0x3770)    #100 Ohm Resistive Load
+#   Dishonest loads
+badFanLoad1Args=( 0, 6,0.400,0.500,60,15,15, 0xBAD1)    #Claims minimum 400 mA, doesn't draw (undercurrent)
+badFanLoad2Args=( 0, 6,0.400,0.500,90,15,15, 0xBAD2)    #Claims max 300 mA, draws more (overcurrent)
+
 
 #Create dictionary of arguments
 loadArgs = {}
@@ -53,21 +42,17 @@ loadArgs.update({vLoArgs[7]:vLoArgs})
 loadArgs.update({iHiArgs[7]:iHiArgs})
 #   Honest load
 loadArgs.update({fanLoadArgs[7]:fanLoadArgs})
-#   Dishonest (or honest and compromised loads)
 loadArgs.update({resLoadArgs[7]:resLoadArgs})
-loadArgs.update({res100DropArgs[7]:res100DropArgs})
-loadArgs.update({res10aDropArgs1[7]:res10aDropArgs1})
-loadArgs.update({res10bDropArgs[7]:res10bDropArgs})
-loadArgs.update({res10aDropArgs2[7]:res10aDropArgs2})
+#   Dishonest (or honest and compromised loads)
+loadArgs.update({badFanLoad1Args[7]:badFanLoad1Args})
+loadArgs.update({badFanLoad2Args[7]:badFanLoad2Args})
 
 #Create a dictionary of hardware (pins)
 loadPin = {}
 loadPin.update({fanLoadArgs[7]:fanLoadPin})
 loadPin.update({resLoadArgs[7]:resLoadPin})
-loadPin.update({res100DropArgs[7]:r_100})
-loadPin.update({res10aDropArgs1[7]:r_10a})
-loadPin.update({res10bDropArgs[7]:r_10b})
-loadPin.update({res10aDropArgs2[7]:r_10a})
+loadPin.update({badFanLoad1Args[7]:fanLoadPin})
+loadPin.update({badFanLoad2Args[7]:fanLoadPin})
 
 #Create dictionary of load requests
 loadReqs = {}
@@ -84,11 +69,9 @@ activeLoadReqs = {}
 #Create dictionary of load names
 tokenNames = {}
 tokenNames.update({0x0217:"Fan   "})
-tokenNames.update({0x3770:"RLoad "})
-tokenNames.update({0x2137:"Res100"})
-tokenNames.update({0xBAD1:"Res10a1"})
-tokenNames.update({0xCACA:"Res10b"})
-tokenNames.update({0xBAD2:"Res10a2"})
+tokenNames.update({0x3770:"Res100"})
+tokenNames.update({0xBAD1:"FanUnd"})
+tokenNames.update({0xBAD2:"FanOvr"})
 
 #Initialize all active entries to 0, False, Not accepted)
 for token in loadArgs:
