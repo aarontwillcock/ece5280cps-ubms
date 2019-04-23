@@ -12,15 +12,16 @@ import activationChecker#Updates activity status of load requests
 #Setup hardware
 fanLoadPin = piGpio.gpioPin(PIPPDefs.FAN_PIN,True,False)        #Fan
 resLoadPin = piGpio.gpioPin(PIPPDefs.RES_PIN,True,False)        # Allow current thru resistors (350 Ohm total)
-dishonestLoad1Pin = piGpio.gpioPin(PIPPDefs.DH1_PIN,True,False) # Bypass 330 Ohm resistor
-dishonestLoad2Pin = piGpio.gpioPin(PIPPDefs.DH2_PIN,True,False) # Bypass 010 Ohm resistor
-dishonestLoad3Pin = piGpio.gpioPin(PIPPDefs.DH3_PIN,True,False) # Bypass 010 Ohm resistor
+r_100 = piGpio.gpioPin(PIPPDefs.DH1_PIN,True,False) # Bypass 100 Ohm resistor
+r_10a = piGpio.gpioPin(PIPPDefs.DH2_PIN,True,False) # Bypass 010 Ohm resistor
+r_10b = piGpio.gpioPin(PIPPDefs.DH3_PIN,True,False) # Bypass 010 Ohm resistor
+
 
 #Hardware example:
 #res + DHL1 + DHL2 + DHL3 = 0 Ohm
 #res + DHL1 + DHL2 = 10 Ohm
 #res + DHL1 = 20 Ohm
-#res = 350 Ohm
+#res = 120 Ohm
 
 #Setup communications
 bmsComm = ubmsComms.uUDPComm(
@@ -31,36 +32,51 @@ bmsComm = ubmsComms.uUDPComm(
 
 #Create Load Request Arg Sets
 #name       =           (Vmin,Vmax,Imin,Imax,releaseTime,duration,deadline,token)
-#Fan Load -         0-6V, 0-500 mA, 10 s from now, for 60 seconds, due 60s from release
-fanLoadArgs =           (0,6,0,0.500,10,60,60, 0x0217)
+#   Honest but Impossible Loads
+#       Voltage
+#           Requested Voltage too High
+vHiArgs =   (12,24,0,100,0,60,1000, 0xDED1)
+#           Requested Voltage too Low
+vLoArgs =   ( 0, 2,0,100,0,60,1000, 0xDED2)
+#       Current
+#           Requested Current too High
+iHiArgs =   ( 0, 6,7,100,0,60,1000, 0xDED3)
+#   Honest, supplyable loads
+#       Fan Load - Starts 10 sec after approval, lasts for 10 seconds
+fanLoadArgs =   (0,6,0,0.500,10,10,10, 0x0217)
+#   Dishonest (or honest but compromised) loads
+#       120 Ohm Resistor Load - starts 30 sec after approval, lasts for 90 sec
+resLoadArgs =   (0,6,0,0.045,30,90,90, 0x3770)
+#       10 Ohm Resistive load drop (120 ohms above becomes 110 ohms)
+#           Starts 45 sec after approval lasts for 15 sec
+#           This load claims to not increase current (but will)
+res10aDropArgs =    (0,6,0,0,45,15,15, 0xBAAD)
+#       10 Ohm Resistive load drop (110 ohms above becomes 100 ohms)
+#           Starts 75 sec after approval, lasts for 15 sec
+#           This load claims to draw a minimum of 500ma (but only draws ~50)
+res10bDropArgs =    (0,6,0.5,0.7,75,15,15, 0xCACA)
 
-#Resistor Load      0-6V, 0-50mA, 30 s from now, for 30 sec, due 30s from release
-resLoadArgs =           (0,6,0,0.050,30,30,30, 0x3770)
-
-#DishonestLoads    All are 0-6V, 0-14mA, 40s from now, for 10s, due 10s from release
-dishonestLoad1Args =    (0,6,0,0.014,40,10,10, 0xBEEF)     #Load will be drawn too early
-dishonestLoad2Args =    (0,6,0,0.014,40,10,10, 0xBAAD)     #Load will be too large
-dishonestLoad3Args =    (0,6,0,0.014,40,10,10, 0xCACA)     #Load will be too little
-
-#Impossible Load    12-24V, 0-100A, 0s from now, for 60 sec, due 1000s after release
-impossibleLoadArgs =    (12,24,0,100,0,60,1000, 0xDEAD)
 
 #Create dictionary of arguments
 loadArgs = {}
+#   Impossible loads
+loadArgs.update({vHiArgs[7]:vHiArgs})
+loadArgs.update({vLoArgs[7]:vLoArgs})
+loadArgs.update({iHiArgs[7]:iHiArgs})
+#   Honest load
 loadArgs.update({fanLoadArgs[7]:fanLoadArgs})
+#   Dishonest (or honest and compromised loads)
 loadArgs.update({resLoadArgs[7]:resLoadArgs})
-loadArgs.update({dishonestLoad1Args[7]:dishonestLoad1Args})
-loadArgs.update({dishonestLoad2Args[7]:dishonestLoad2Args})
-loadArgs.update({dishonestLoad3Args[7]:dishonestLoad3Args})
-loadArgs.update({impossibleLoadArgs[7]:impossibleLoadArgs})
+loadArgs.update({res10aDropArgs[7]:res10aDropArgs})
+loadArgs.update({res10bDropArgs[7]:res10bDropArgs})
 
 #Create a dictionary of hardware (pins)
 loadPin = {}
 loadPin.update({fanLoadArgs[7]:fanLoadPin})
 loadPin.update({resLoadArgs[7]:resLoadPin})
-loadPin.update({dishonestLoad1Args[7]:dishonestLoad1Pin})
-loadPin.update({dishonestLoad2Args[7]:dishonestLoad2Pin})
-loadPin.update({dishonestLoad3Args[7]:dishonestLoad3Pin})
+loadPin.update({resLoadArgs[7]:r_100})
+loadPin.update({res10aDropArgs[7]:r_10a})
+loadPin.update({res10bDropArgs[7]:r_10b})
 
 #Create dictionary of load requests
 loadReqs = {}
@@ -73,6 +89,13 @@ acceptedLoadReqs = {}
 
 #Create dictionary of active load requests
 activeLoadReqs = {}
+
+#Create dictionary of load names
+tokenNames = {}
+tokenNames.update({0x0217:"Fan   "})
+tokenNames.update({0x3770:"Res   "})
+tokenNames.update({0xBAAD:"Res10a"})
+tokenNames.update({0xCACA:"Res10b"})
 
 #Initialize all active entries to 0, False, Not accepted)
 for token in loadArgs:
@@ -140,7 +163,7 @@ def periodic():
         if(activeLoadReqs.get(token) and token in loadPin.keys()):
 
             #Alert user:
-            print(hex(int(token))," active")
+            print(hex(int(token)),tokenNames.get(token)," active")
 
             #Turn on pin (allowing current flow)
             loadPin.get(token).on()
@@ -149,7 +172,7 @@ def periodic():
 
             #Else, turn off pin
             loadPin.get(token).off()
-            print(hex(int(token))," inactive")
+            print(hex(int(token)),tokenNames.get(token)," inactive")
 
     #Wait for next period
     time.sleep(1)
