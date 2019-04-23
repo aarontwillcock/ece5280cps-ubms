@@ -21,6 +21,8 @@ class gpioPin:
         else:
             gpio.setup(self.pin, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 
+        self.off()
+
     def on(self):
         if(self.out):
             gpio.output(self.pin,gpio.HIGH)

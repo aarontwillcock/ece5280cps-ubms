@@ -10,6 +10,7 @@ import time             #Time tracking
 import PIPPDefs         #Pin and IP defines
 import time             #Time measurements
 import threading        #Threading time interrupt
+import activationChecker#Updates activity status of load requests
 
 #mAh Consumed Definition
 #from (https://www.analog.com/media/en/technical-documentation/data-sheets/4150fc.pdf)
@@ -144,21 +145,7 @@ def periodic():
     now = time.time()
 
     #Activate loads if necessary
-    for loadReqToken in acceptedLoadReqs:
-
-        print("Reviewing:",loadReqToken)
-
-        #If accepted load request release time is now or later
-        if( acceptedLoadReqs.get(loadReqToken).releaseTime >= now
-            and acceptedLoadReqs.get(loadReqToken).deadline < now):
-
-            #Flag load as active
-            activeLoadReqs.update({loadReqToken:1})
-        
-        else:
-
-            #Update its key
-            activeLoadReqs.update({loadReqToken:0})
+    activationChecker.updateActiveLoads(acceptedLoadReqs,activeLoadReqs,now)
 
     #Calculate min, max current for all loads
     Imin = 0
