@@ -68,9 +68,8 @@ acceptedLoadReqs = {}
 #Create dictionary of active load requests
 activeLoadReqs = {}
 
-#Initialize all accepted, active entries to 0, False, Not accepted)
+#Initialize all active entries to 0, False, Not accepted)
 for token in loadArgs:
-    acceptedLoadReqs.update({token : 0})
     activeLoadReqs.update({token : 0})
 
 #Create API calls
