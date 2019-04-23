@@ -30,8 +30,8 @@ iHiArgs =       ( 0, 6,7.000,100.0,0,60,1000, 0xDED3)   #Current too high
 fanLoadArgs =   ( 0, 6,0.000,0.500,10,10,10, 0x0217)    #Fan Load
 resLoadArgs =   ( 0, 6,0.000,0.045,30,15,15, 0x3770)    #100 Ohm Resistive Load
 #   Dishonest loads
-badFanLoad1Args=( 0, 6,0.400,0.500,60,15,15, 0xBAD1)    #Claims minimum 400 mA, doesn't draw (undercurrent)
-badFanLoad2Args=( 0, 6,0.400,0.500,90,15,15, 0xBAD2)    #Claims max 300 mA, draws more (overcurrent)
+badFanLoad1Args=( 0, 6,0.450,0.500,60,15,15, 0xBAD1)    #Claims minimum 400 mA, doesn't draw (undercurrent)
+badFanLoad2Args=( 0, 6,0.000,0.300,90,15,15, 0xBAD2)    #Claims max 300 mA, draws more (overcurrent)
 
 
 #Create dictionary of arguments
@@ -127,6 +127,7 @@ def periodic():
 
     #Get current time
     now = time.time()
+    print(now)
 
     #Activate loads if necessary
     acceptedLoadReqs, activeLoadReqs = activationChecker.updateActiveLoads(acceptedLoadReqs,activeLoadReqs,now)

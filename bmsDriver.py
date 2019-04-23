@@ -156,12 +156,13 @@ def periodic():
             #Sum min/max current
             Imin += acceptedLoadReqs.get(token).Imin
             Imax += acceptedLoadReqs.get(token).Imax
-
+            
+    print(now)
     print("Imin/Imax mAh")
     print(Imin*1000,"/",Imax*1000)
 
     #Print avg current
-    print(mA_avg)
+    print("mA Avg: ",mA_avg)
 
     #Try to receive message
     data, addr = bmsComm.udpRecvMsg(1024)
