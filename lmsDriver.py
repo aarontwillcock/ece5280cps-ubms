@@ -33,31 +33,17 @@ bmsComm = ubmsComms.uUDPComm(
 #Create Load Request Arg Sets
 #name       =           (Vmin,Vmax,Imin,Imax,releaseTime,duration,deadline,token)
 #   Honest but Impossible Loads
-#       Voltage
-#           Requested Voltage too High
-vHiArgs =   (12,24,0,100,0,60,1000, 0xDED1)
-#           Requested Voltage too Low
-vLoArgs =   ( 0, 2,0,100,0,60,1000, 0xDED2)
-#       Current
-#           Requested Current too High
-iHiArgs =   ( 0, 6,7,100,0,60,1000, 0xDED3)
+vHiArgs =       (12,24,0.000,0.001,0,60,1000, 0xDED1)   #Voltage too high
+vLoArgs =       ( 0, 2,0.000,0.001,0,60,1000, 0xDED2)   #Voltage too low
+iHiArgs =       ( 0, 6,7.000,100.0,0,60,1000, 0xDED3)   #Current too high
 #   Honest, supplyable loads
-#       Fan Load - Starts 10 sec after approval, lasts for 10 seconds
-fanLoadArgs =   (0,6,0,0.500,10,10,10, 0x0217)
+fanLoadArgs =   ( 0, 6,0.000,0.500,10,10,10, 0x0217)    #Fan        10 sec to 20 sec
 #   Dishonest (or honest but compromised) loads
-#       Enable the resistive load for 90 seconds
-resLoadArgs =   (0,6,0,0.045,30,90,90, 0x3770)
-#       Short around 100 ohm resistor for 60 sec - Leaving 20 Ohm resistance
-res100DropArgs =    (0,6,0,0.260,30,60,60, 0x2137)
-#       Short around 10 oHm load (20 ohms above becomes 10 ohms)
-#           This load claims to not increase current (but will)
-res10aDropArgs1 =    (0,6,0,0,60,15,15, 0xBAD1)
-#       10 Ohm Resistive load drop (110 ohms above becomes 100 ohms)
-#           Starts 75 sec after approval, lasts for 15 sec
-#           Short around both 10 oHm loads (leaving 100 ohms resistance)
-#           This load claims to draw a minimum of 500ma (but only draws ~50)
-res10bDropArgs =    (0,6,0.5,0.7,105,15,15, 0xCACA)
-res10aDropArgs2 =    (0,6,0,0,105,15,15, 0xBAD2)
+resLoadArgs =   ( 0, 6,0.000,0.045,30,90,90, 0x3770)    #Res load   30 sec to 120 sec
+res100DropArgs =( 0, 6,0.000,0.260,30,60,60, 0x2137)    #Short res load to 20 ohms
+res10aDropArgs1=( 0, 6,0.000,0.000,60,15,15, 0xBAD1)    #Short res load to 10 ohms
+res10bDropArgs =( 0, 6,0.500,0.700,105,15,15, 0xCACA)   #Short both 10 ohm resistors
+res10aDropArgs2=( 0, 6,0.000,0.000,105,15,15, 0xBAD2)   #Short both 10 ohm resistors
 
 #Create dictionary of arguments
 loadArgs = {}
@@ -180,6 +166,8 @@ def periodic():
             #Else, turn off pin
             loadPin.get(token).off()
             print(hex(int(token)),tokenNames.get(token)," inactive")
+
+    print("-----")
 
     #Wait for next period
     time.sleep(1)
