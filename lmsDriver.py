@@ -133,6 +133,9 @@ def periodic():
         #If load is active
         if(activeLoadReqs.get(token) and token in loadPin.keys()):
 
+            #Alert user:
+            print(hex(int(token))," active")
+
             #Turn on pin (allowing current flow)
             loadPin.get(token).on()
 
