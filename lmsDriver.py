@@ -25,13 +25,13 @@ bmsComm = ubmsComms.uUDPComm(
 
 #Create Load Request Arg Sets
 #name       =           (Vmin,Vmax,Imin,Imax,releaseTime,duration,deadline,token)
-#Fan Load -         0-6V, 0-500 mA, 10 s from now, for 30 seconds, due 120s from release
-fanLoadArgs =           (0,6,0,0.500,10,30,30, 0x0217)
+#Fan Load -         0-6V, 0-500 mA, 10 s from now, for 60 seconds, due 60s from release
+fanLoadArgs =           (0,6,0,0.500,10,60,60, 0x0217)
 
-#Resistor Load      0-6V, 0-50mA, 30 s from now, for 60 sec, due 120s from release
+#Resistor Load      0-6V, 0-50mA, 30 s from now, for 30 sec, due 30s from release
 resLoadArgs =           (0,6,0,0.050,30,30,30, 0x3770)
 
-#DishonestLoads    All are 0-6V, 0-14mA, 40s from now, for 10s, due 100s from release
+#DishonestLoads    All are 0-6V, 0-14mA, 40s from now, for 10s, due 10s from release
 dishonestLoad1Args =    (0,6,0,0.014,40,10,10, 0xBEEF)     #Load will be drawn too early
 dishonestLoad2Args =    (0,6,0,0.014,40,10,10, 0xBAAD)     #Load will be too large
 dishonestLoad3Args =    (0,6,0,0.014,40,10,10, 0xCACA)     #Load will be too little
