@@ -8,7 +8,6 @@ import ubmsSupply       #Modeling battery
 import piGpio           #Interrupt Handling, polarity detection
 import time             #Time tracking
 import PIPPDefs         #Pin and IP defines
-import time             #Time measurements
 import threading        #Threading time interrupt
 import activationChecker#Updates activity status of load requests
 
