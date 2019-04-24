@@ -79,7 +79,8 @@ The contributions of this project report are summarized as:
 \end{enumerate}
 
 Additionally, this report along with all source code can be found on GitHub at:
-https://github.com/aarontwillcock/ece5280cps-ubms
+https://github.com/
+aarontwillcock/ece5280cps-ubms
 
 \subsection{Report Outline}
 The remainder of the report is as follows.
@@ -236,7 +237,7 @@ An example load request, constructed as a list of arguments in Python, may look 
 \end{lstlisting}
 which specifies a load with a voltage range of 0-6 volts (V), current range of 0-200 milliamp hours (mAh), power range of 0-1.2 Watts (W), release time of 10 seconds, duration of 10 seconds, energy range of 0-12 Joules (J), a deadline of 120 seconds, and a hexadecimal token 0x0217.
 
-The load request template can be found on https://github.com/aarontwillcock/ece5280cps-ubms/blob/master/ubmsLoad.py.
+The load request template can be found on in the ubmsLoad.py file.
 
 The LMS maintains a dictionary of load requests sent to the BMS which is updated whenever the BMS changes the accepted/rejected status of the request. 
 
@@ -280,7 +281,6 @@ BMSs are responsible for monitoring a number of characteristics. These character
 \end{enumerate}
 
 It is possible for any combination of these parameters to deviate from expectations.
-However, it is unclear how expectations might be established.
 For the purpose of this work, we used the BMS modeling of the battery and the LMS modeling of loads (and thus load requests) to establish expectations.
 Online anomaly detection, is possible based on the combination of the BMS battery model and LMS load requests.
 
@@ -290,7 +290,6 @@ In this work, the proposed system model addresses five types of anomalies: over/
 \subsubsection{Over Voltage}
 Overvoltage occurs when the voltage supplied by the battery exceeds the acceptable maximum input voltage of the load.
 For example, using a 12V battery (ex. from an automobile) to directly power a 5V system (ex. a Raspberry Pi) may result in higher current and damage to the powered system.
-
 Any load request whose minimum voltage range exceeds the battery's maximum configurable voltage range is rejected on the basis of overvoltage protection.
 
 \subsubsection{Under Voltage}
@@ -318,7 +317,7 @@ Although the load my have an acceptable voltage range, draw an acceptable amount
 
 \section{Experiments}\label{sec:experiments}
 The anomaly detection described above was implemented on the BMS as a method of accepting and rejecting loads.
-Implementation details of the online anomaly detection may be found at https://github.com/aarontwillcock/ece5280cps-ubms/blob/master/ubmsSupply.py in the isProblemToSupply() function and https://github.com/aarontwillcock/ece5280cps-ubms/blob/master/bmsDriver.py in the periodic() function.  
+Implementation details of the online anomaly detection may be found at in the isProblemToSupply() function of ubmsSupply.py and in the periodic() function of bmsDriver.py.  
 The following section describes how the experiments are setup and executed.
 
 \subsection{Experimental Setup}
@@ -329,7 +328,7 @@ The experimental setup consisted of recreating the setup in Figure \ref{fig:bmsM
     \item only the fan and 100 Ohm resistive loads are used
 \end{enumerate}
 
-In the LMS Driver file (https://github.com/aarontwillcock/ece5280cps-ubms/blob/master/lmsDriver.py), several load requests are constructed.
+In the LMS Driver file (lmsDriver.py), several load requests are constructed.
 Some load requests are known to be impossible or dishonest in advance but are created to test the BMS.
 
 Each load request represents one of the five anomalies detected by the BMS.
@@ -460,7 +459,7 @@ However, there was no means by which the coulomb counter could be used to sample
 Thus, while the coulomb counter served well as a "battery fuel gauge" it made current detection more difficult than intended.
 Were this project to be repeated, a shunt would be used in conjunction with the coulomb counter to allow for instantaneous current sampling.
 For context, a shunt is a small-valued resistor across which voltage may be sampled.
-Ohms law provides an explicit relationship between the voltage across the small-valued resistor and the current flowing through it.
+Ohm's law ($V=IR$) provides an explicit relationship between the voltage across the small-valued resistor and the current flowing through it.
 With the appropriate hardware, the Raspberry Pi GPIO could sample the voltage across the shunt whenever a current measurement was necessary and use the coulomb counter only as a fuel gauge.
 
 This oversight resulted in inappropriate current readings when loads shifted from high current to low current as the firing frequency of the coulomb counters ISR drops significantly when switching from the fan load to the resistor load.
@@ -553,7 +552,7 @@ Since the PN2222a transistors control current flow from the battery to loads, th
 
 \subsubsection{Interrupt Service Routines}
 As mentioned above, the coulomb counter fires an interrupt (INT) each time a fixed value of charge passes through the counter.
-The BMS, therefore, has an ISR defined in https://github.com/aarontwillcock/ece5280cps-ubms/blob/master/bmsDriver.py responsible for handling the interrupt.
+The BMS, therefore, has an ISR defined in the BMS driver (bmsDriver.py) responsible for handling the interrupt.
 The ISR is also responsible for sampling the polarity (POL) pin of the coulomb counter to determine direction.
 
 \section{Conclusion and Future Work}\label{sec:conclusion}
@@ -567,7 +566,7 @@ Future work for this project include addressing the deferred objectives describe
     \item load-request adjustment by the BMS
 \end{enumerate}
 
-As previously mentioned, all digital resources (including this report) can be found on:
+As previously mentioned, all digital resources (including this report) can be found on:\\
 https://github.com/aarontwillcock/ece5280cps-ubms
 
 \bibliography{uBms}
