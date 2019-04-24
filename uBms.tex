@@ -78,6 +78,9 @@ The contributions of this project report are summarized as:
     \item a low-cost BMS-LMS system implmentation that demonstrates anomaly detection.
 \end{enumerate}
 
+Additionally, this report along with all source code can be found on GitHub at:
+https://github.com/aarontwillcock/ece5280cps-ubms
+
 \subsection{Report Outline}
 The remainder of the report is as follows.
 Section \ref{sec:relatedWork}, Related Work, covers related work in topics including batteries, battery management systems, and real-time systems.
@@ -223,6 +226,8 @@ An example load request, constructed as a list of arguments in Python, may look 
 \end{lstlisting}
 which specifies a load with a voltage range of 0-6 volts (V), current range of 0-200 milliamp hours (mAh), power range of 0-1.2 Watts (W), release time of 10 seconds, duration of 10 seconds, energy range of 0-12 Joules (J), a deadline of 120 seconds, and a hexadecimal token 0x0217.
 
+The load request template can be found on https://github.com/aarontwillcock/ece5280cps-ubms/blob/master/ubmsLoad.py.
+
 The LMS maintains a dictionary of load requests sent to the BMS which is updated whenever the BMS changes the accepted/rejected status of the request. 
 
 \subsection{Load Request Replies}
@@ -273,7 +278,7 @@ Online anomaly detection, is possible based on the combination of the BMS batter
 In this work, the proposed system model addresses five types of anomalies: over/under voltage, over/under current, and load mismatch.
 
 \subsubsection{Over Voltage}
-Overvoltage occurs when the voltage supplied to a load exceeds the acceptable maximum input voltage of the load.
+Overvoltage occurs when the voltage supplied by the battery exceeds the acceptable maximum input voltage of the load.
 For example, using a 12V battery (ex. from an automobile) to directly power a 5V system (ex. a Raspberry Pi) may result in higher current and damage to the powered system.
 
 Any load request whose minimum voltage range exceeds the battery's maximum configurable voltage range is rejected on the basis of overvoltage protection.
@@ -284,28 +289,88 @@ For example, using a ~5V battery system (ex. the one in this model) to directly 
 In the worst case, undervoltage may lead to damage if unprotected field-effect transistors are used.
 
 \subsubsection{Over Current}
-Overcurrent occurs when the current drawn by a load exceeds the maximum current for which the load is rated.
+Overcurrent occurs when the minimum current required by a load exceeds the maximum current for which the load is rated.
 For example, suppose a phone charger is rated to draw at most 2.1A while charging.
 If the charger were to begin drawing 5.0A, one might suspect a fault in the charger or overvoltage at the supply.
 In either case, the result is out of the load specification and may be treated as a short-circuit.
 
 \subsubsection{Under Current}
 Undercurrent occurs when the current drawn by a load falls below the minimum current the load is expected to draw.
-For example, 
+While this is not inherently dangerous, it may indicate an alternate load has been powered or that the powered load is malfunctioning.
 
 \subsubsection{Load Mismatch}
+A load mismatch occurs when the energy expended by the load exceeds the maximum energy range provided in the load request.
+A load expending more energy than allotted indicates that it has either drawn more current over the allowed duration or exceeded the duration it claimed to be active.
+
+A load mismatch also occurs when the load is activated before its release time or after its deadline. 
+Although the load my have an acceptable voltage range, draw an acceptable amount of current, and not exceed the energy limits, activating outside the release time and deadline may interfere with other loads or push the peak power draw above acceptable limits.
+
 
 \section{Experiments}\label{sec:experiments}
+The anomaly detection described above was implemented on the BMS as a method of accepting and rejecting loads.
+Implementation details of the online anomaly detection may be found at https://github.com/aarontwillcock/ece5280cps-ubms/blob/master/ubmsSupply.py in the isProblemToSupply() function and https://github.com/aarontwillcock/ece5280cps-ubms/blob/master/bmsDriver.py in the periodic() function.  
+The following section describes how the experiments are setup and executed.
+
 \subsection{Experimental Setup}
+The experimental setup consisted of recreating the setup in Figure \ref{fig:bmsModelPics} with three key differences:
+\begin{enumerate}
+    \item the grounds of both Raspberry Pis are tied together,
+    \item the Raspberry Pis are powered by external power supplies (so the builtin power protection circuitry is used), and
+    \item only the fan and 100 Ohm resistive loads are used
+\end{enumerate}
+
+In the LMS Driver file (https://github.com/aarontwillcock/ece5280cps-ubms/blob/master/lmsDriver.py), several load requests are constructed.
+Some load requests are known to be impossible or dishonest in advance but are created to test the BMS.
+
+Each load request represents one of the five anomalies detected by the BMS.
+The following list describes each load request name and its purpose:
+\begin{enumerate}
+    \item vHiArgs - Requests a supply voltage that is too high for the BMS
+    \item vLoArgs - Requests a supply voltage that is too low for the BMS
+    \item iHiArgs - Requests a max current that is too high for the BMS
+    \item fanLoadArgs - Requests an honest voltage and current range to support the fan
+    \item resLoadArgs - Requests an honest voltage and current range to support the 100 ohm resistor
+    \item badFanLoad1Args - Requests a dishonest current range (too high) to support the fan
+    \item badFanLoad2Args - Requests a dishonest current range (too low) to support the fan
+\end{enumerate}
+
+The first three load requests demonstrate anomaly detection prior to accepting loads as the requested loads are out of range of the BMS.
+The fanLoadArgs and resLoadArgs requests are honest depictions of the fan and resistor loads.
+The final two fan load requests are accepted until they are executed at which point the BMS detects the load mismatch between the requested load and the load that is being executed.
+
 \subsection{Experimental Execution}
-\subsubsection{Over Voltage}
-\subsubsection{Under Voltage}
+To run the experiment, the BMS and LMS are connected as depicted in Figure \ref{fig:bmsModelPics} with the exceptions noted above.
+After each device is powered on, SSH is used to access the BMS and run bmsDriver.py.
+Subsequently, SSH is used to access the LMS and run lmsDriver.py
+
+The LMS will send load requests over UDP and await acceptance or rejection by the BMS.
+After all load requests are handled, the schedule defined by the load requests is executed.
+
+Each load request serves as a separate experiment described below.
+
+\subsubsection{Over / Under Voltage}
+The over and under voltage protection is tested by the vHiArgs and vLoArgs load request.
+It is expected that these load requests should be rejected on the basis of their voltage range being outside the supplied voltage range of the battery and thus the BMS. 
+
 \subsubsection{Over Current}
+The overcurrent protection is tested by the iHiArgs load request.
+It is expected that this load request should be rejected on the basis that its maximum current draw exceeds the allowable current draw from the battery.
+
 \subsubsection{Under Current}
+Since the NiMH battery does not have a minimum required current draw, undercurrent protection is tested by the badFanLoad1Args load request where the requested load exceeds the fan current draw.
+It is expected that the load request should be accepted initially but rejected during the execution of this load (since the current draw is too low).
+
 \subsubsection{Load Mismatch}
+The badFanLoad2Args load request falsely claims the current draw of the fan is lower than it is.
+This final load request demonstrates the detection of a load mismatch online where the fan current draw greatly exceeds the load request and thus the load should be rejected.
 
 \section{Results}\label{sec:results}
+The results of each experiment are displayed to the user through the BMS and LMS SSH terminals.
+The following section presents the results of each load request and its subsequent rejection.
+
 \subsubsection{Over Voltage}
+
+
 \subsubsection{Under Voltage}
 \subsubsection{Over Current}
 \subsubsection{Under Current}

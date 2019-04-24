@@ -149,7 +149,7 @@ def periodic():
             else:
                 pinsToEnable |= 0b01
 
-        else:
+        elif(token in loadPin.keys()):
 
             print(hex(int(token)),tokenNames.get(token)," inactive")
 
