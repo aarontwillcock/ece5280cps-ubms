@@ -75,7 +75,7 @@ The contributions of this project report are summarized as:
     \item a low-cst BMS-LMS model,
     \item a protocol for request-based BMS-LMS communication,
     \item a set of online anomaly detection methods based on the above model and protocol, and
-    \item a low-cost BMS-LMS system implmentation that demonstrates anomaly detection.
+    \item a low-cost BMS-LMS system implementation that demonstrates anomaly detection.
 \end{enumerate}
 
 Additionally, this report along with all source code can be found on GitHub at:
@@ -100,7 +100,7 @@ The following subsections highlight some relevant works in these topics.
 \subsection{Batteries and Battery Management Systems}
 Relevant battery-specific research includes recent works on software-defined batteries \cite{softwareDefinedBatteriesConf,softwareDefinedBatteriesJrnl}.
 In software-defined batteries, batteries of different chemistries may be combined to leverage the benefits of both chemistries.
-Through fast switching, batterying charging and discharging can be optimized by distributing the energy load according to battery type.
+Through fast switching, battery charging and discharging can be optimized by distributing the energy load according to battery type.
 
 In a less-flexible sense, other batteries leverage software to closely monitor individual cells and provide load balancing across those cells with the goal of extending battery lifetime \cite{towardsSmarterBatteryDesign}.
 
@@ -192,6 +192,16 @@ Thus, the only loads powered by the NiMH batteries are the fan and 100 Ohm resis
     \label{fig:bmsModelPics}
 \end{figure}
 
+\subsection{System Model Cost}
+The total cost for all materials is under 100 USD with item-specific prices list below:
+\begin{itemize}
+    \item Raspberry Pi 3            - 40 USD
+    \item Basic Electronics Kit     - 30 USD
+    \item LTC4150 Module            - 12 USD
+    \item AA Battery case           -  8 USD
+    \item Raspberry Pi Zero W       -  5 USD
+\end{itemize}
+
 \section{Request-Based Communication Protocol}\label{sec:rbComm}
 Using the hardware presented in the previous section, the BMS and LMS are now capable of describing their respective supplies and demands via the UDP connection.
 To facilitate online anomaly detection, the following section describes the protocol used when the LMS intends to activate a load and draw power from the batteries.
@@ -233,7 +243,7 @@ The LMS maintains a dictionary of load requests sent to the BMS which is updated
 \subsection{Load Request Replies}
 Upon receiving a load request from the LMS, the BMS performs several comparisons.
 The voltage range of the load is used to determine whether under- or over-voltage constraints apply.
-For example, suppose the battery managed by the BMS were reconfigurable as a 12V or 24V battery. One load may require 24V supply while a second load may require a 12V supply. The BMS must either accept both loads at differnt time ranges (so it may reconfigure cells in between) or reject one of the loads.
+For example, suppose the battery managed by the BMS were reconfigurable as a 12V or 24V battery. One load may require 24V supply while a second load may require a 12V supply. The BMS must either accept both loads at different time ranges (so it may reconfigure cells in between) or reject one of the loads.
 Supplying 12V to the 24V-only system (or vice-versa) may cause undervoltage (or overvoltage) and damage components.
 
 Similarly, current ranges may be used to determine whether the current battery configuration can support the minimum and maximum current draw expected from the load.
@@ -245,13 +255,13 @@ The power ranges are used to determine whether the battery configuration can sus
 The energy ranges, like minimum current draw, are used later in anomaly detection.
 
 Finally, the timing constraints are used to calculate the power and energy ranges from the baseline voltage and current ranges.
-The timing constraints also allow the BMS to schedule loads which might otherwise be incompatable due to peak power draw.
+The timing constraints also allow the BMS to schedule loads which might otherwise be incompatible due to peak power draw.
 
 After determining if the load request can be satisfied, the BMS replies using only the load requests unique token and an error code (if any such error code exists).
 No error code (or an error code of 0) indicates the load request is accepted and is scheduled as defined.
 
 \section{Anomaly Detection Methods}\label{sec:anomalyDetection}
-Having established the structure of request-based communication between the BMS and LMS, the following section descrtibes the anomly detection methods used by the implementation.
+Having established the structure of request-based communication between the BMS and LMS, the following section describes the anomaly detection methods used by the implementation.
 
 \subsection{BMS Anomalies}
 BMSs are responsible for monitoring a number of characteristics. These characteristics include, but are not limited to:
@@ -269,7 +279,7 @@ BMSs are responsible for monitoring a number of characteristics. These character
     \item communications
 \end{enumerate}
 
-It is possible for any combination of these paramters to deviate from expectations.
+It is possible for any combination of these parameters to deviate from expectations.
 However, it is unclear how expectations might be established.
 For the purpose of this work, we used the BMS modeling of the battery and the LMS modeling of loads (and thus load requests) to establish expectations.
 Online anomaly detection, is possible based on the combination of the BMS battery model and LMS load requests.
@@ -284,7 +294,7 @@ For example, using a 12V battery (ex. from an automobile) to directly power a 5V
 Any load request whose minimum voltage range exceeds the battery's maximum configurable voltage range is rejected on the basis of overvoltage protection.
 
 \subsubsection{Under Voltage}
-Undervoltage occurs when the voltage supplied to a load falls below the accpetable minimum input voltage of the load.
+Undervoltage occurs when the voltage supplied to a load falls below the acceptable minimum input voltage of the load.
 For example, using a ~5V battery system (ex. the one in this model) to directly power an automobile starter motor (typically powered by a 12V lead acid battery), will likely prevent the load from performing properly.
 In the worst case, undervoltage may lead to damage if unprotected field-effect transistors are used.
 
@@ -368,30 +378,197 @@ This final load request demonstrates the detection of a load mismatch online whe
 The results of each experiment are displayed to the user through the BMS and LMS SSH terminals.
 The following section presents the results of each load request and its subsequent rejection.
 
-\subsubsection{Over Voltage}
+\subsubsection{Over / Under Voltage}
+The first two loads (vHiArgs and vLoArgs) are rejected by the BMS on the basis of voltage being out of range.
+Figure \ref{fig:vOutOfRange} shows the terminal output of the BMS indicating this error.
+The LMS also receives a reply indicating these loads have been rejected as seen in Figure \ref{fig:lmsRejected}.
+The unique tokens for the under and over voltage loads are 0xded1 and 0xded2.
 
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=6.5in]{img/vOutOfRange.png}
+    \caption{BMS rejecting over/under voltage load requests}
+    \label{fig:vOutOfRange}
+\end{figure}
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=6.5in]{img/lmsRejected.png}
+    \caption{LMS receiving rejected load request replies}
+    \label{fig:lmsRejected}
+\end{figure}
 
-\subsubsection{Under Voltage}
 \subsubsection{Over Current}
+The third load (iHiArgs) is rejected by the BMS on the basis of the battery being unable to support the current range requested by the load.
+Figure \ref{fig:iOutOfRange} shows the terminal output of the BMS indicating this error.
+Figure \ref{fig:lmsRejected} also shows this third rejection with token 0xded3.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=6.5in]{img/vOutOfRange.png}
+    \caption{BMS rejecting overcurrent load requests}
+    \label{fig:iOutOfRange}
+\end{figure}
+
 \subsubsection{Under Current}
+The undercurrent load (badFanLoad1Args) is also rejected by the BMS on the basis of the current draw being lower than the expected current draw.
+Figure \ref{fig:iUnder} shows the terminal output of the BMS indicating this error.
+The BMS also identifies which load is responsible for the undercurrent.
+The LMS terminal also indicates the fan load is the only active load at the time in Figure \ref{fig:badFan1Active}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=6.5in]{img/iUnder.png}
+    \caption{BMS rejecting undercurrent load requests}
+    \label{fig:iUnder}
+\end{figure}
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=6.5in]{img/badFan1Active.png}
+    \caption{LMS fanUnder (badFanLoad1Args) load active}
+    \label{fig:badFan1Active}
+\end{figure}
+
 \subsubsection{Load Mismatch}
+Finally, the mismatched load (badFanLoad2Args) is also rejected by the BMS as the current draw of the motor is much higher than the load request indicated.
+Figure \ref{fig:iOver} shows the terminal output of the BMS indicating this error.
+The LMS terminal also indicates the fan load is the only active load at the time in Figure \ref{fig:badFan2Active}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=6.5in]{img/iOver.png}
+    \caption{BMS rejecting a load mismatch}
+    \label{fig:iOver}
+\end{figure}
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=6.5in]{img/badFan2Active.png}
+    \caption{LMS fanOvr (badFanLoad2Args) load active}
+    \label{fig:badFan2Active}
+\end{figure}
 
 \section{Discussion}\label{sec:discussion}
+The following section discusses some model weaknesses, implementation challenges, deferred objectives, and course-related work.
+
 \subsection{Model Weaknesses}
-\subsubsection{Hardware}
-\subsubsection{Networking}
-\subsubsection{Anomaly Detection}
+During the development of this project, several weaknesses became apparent.
+The following subsections describe these weaknesses.
+
+\subsubsection{Coulomb Counters as a Restriction}
+A coulomb counter was chosen as the measurement device with the (mis)understanding that it could dually serve as a method of monitoring current flow.
+After installing the hardware and creating an ISR to service the interrupts, it became apparent that smaller current draws correlated to less frequently firing interrupts.
+However, there was no means by which the coulomb counter could be used to sample the instantaneous current.
+Thus, while the coulomb counter served well as a "battery fuel gauge" it made current detection more difficult than intended.
+Were this project to be repeated, a shunt would be used in conjunction with the coulomb counter to allow for instantaneous current sampling.
+For context, a shunt is a small-valued resistor across which voltage may be sampled.
+Ohms law provides an explicit relationship between the voltage across the small-valued resistor and the current flowing through it.
+With the appropriate hardware, the Raspberry Pi GPIO could sample the voltage across the shunt whenever a current measurement was necessary and use the coulomb counter only as a fuel gauge.
+
+This oversight resulted in inappropriate current readings when loads shifted from high current to low current as the firing frequency of the coulomb counters ISR drops significantly when switching from the fan load to the resistor load.
+The remedy (without using a shunt) was to use the time since the last sample to continually adjust the current estimate.
+Still, the resultant calculation is only an estimate - a shortcoming of this approach.
+
+\subsubsection{No Priorities or Conflict Resolution}
+In the case where multiple loads are scheduled atop one another, no priority scheme is established to decide which loads should be rejected.
+As an example, suppose an electric vehicle can power heated seats while also driving motors.
+The driver wishes to drive 40 miles independent of whether the heated seats are enabled.
+If the combination of driving and using heated seats requires more energy than the battery can supply, both will be rejected.
+
+In practice, a better approach would be to reject the lower-priority load request or adjust the lower-priority load request to reduce power consumption.
+A practical realization of this approach would be to run the heated seat as on a 50\% duty cycle rather than keep them active the entire time.
+
+\subsubsection{Hidden Loads}
+Another weakness is the possible of parasitic loads hiding in the "wake" of larger loads (and thus larger load requests).
+For example, suppose a motor requests to draw 100A maximally.
+If the motor only draws 80A of the 100A allotted, a parasitic (or malicious) load on the power bus could wait until the motor's load request was active to consume the difference in power between the motor's actual current draw and its allotted current draw.
+Thus, 20A could be consumed by another system that did not file a load request without being detected.
+Thus, while the practice of using request-based communication may mitigate some anomalies it also opens up an attack surface.
+
 \subsection{Implementation Challenges}
+As mentioned in the discussion of coulomb counters above, development of the BMS and LMS led to the discovery of several challenges when realizing the system.
+The following section describes some challenges encountered.
+
 \subsubsection{Hardware}
+The greatest difficulties in implementation came from misunderstanding the Controller Area Network (CAN) implementation requirements.
+The original intent was to use a CAN bus to communicate between the BMS and LMS as would likely be done in an automotive setting.
+However, the microcontrollers originally used (PIC18Fs) were not equipped to be used with the CAN transceivers originally purchased.
+The CAN controller required for communicating with the transceivers was missing and could not be replicated with the hardware on hand.
+Thus, communication was performed through wireless interfaces on the Raspberry Pis.
+
 \subsubsection{Software}
+The only "problem" encountered in software development was an issue of packaging class variables when sending the variables over UDP.
+It was expected that Python would list all class variables consistently when calling the vars(), local(), and global() functions.
+Interestingly, despite enumerating variables in a fixed order (as seen by the load request example) there is no guarantee the variables will be listed in the order they are initialized.
+
+This problem, although simple in hindsight, consumed a fair amount of time when debugging UDP communications.
+The lesson, as always, is to never assume anything about the software implementation that lies beneath.
+
 \subsection{Deferred Objectives}
+As mentioned in the implementation challenges above, the switch from CAN to wireless interfaces occurred after a misunderstanding about CAN transceivers.
+The following section discusses objectives deferred due to time, hardware, software, or other issues.
+
 \subsubsection{Controller Area Network Communication}
+As mentioned above, a CAN bus was originally intended to carry the communication of load requests and replies between the BMS and LMS.
+This objective was deferred as the incorrect hardware was purchased and the necessary hardware would not arrive in time to finish the project.
+As such, wireless communication and UDP was used in place of the CAN bus.
+
 \subsubsection{Min/Max Energy Consumption}
+The original intent of establishing energy ranges was to hold loads accountable for drawing too much or too little energy.
+Due to time constraints, this feature was not implemented.
+
 \subsubsection{Peak Shaving via Sliding Windows}
+Although the "duration" term in load requests is provided primarily as a means of calculating expected energy usage, duration also gives the BMS the freedom to power the load anywhere in the time window between "release time" and "deadline".
+In real-time systems, the scheduler is responsible for allocating WCETs such that all jobs are completed before their deadline and no WCETs overlap.
+In a BMS, however, it is acceptable for loads to overlap - in fact, it is a requirement for most BMSs.
+However, when scheduling loads it is important that the peak power draw not exceed the peak power output of the battery.
+Beyond this, however, it is beneficial for the BMS to minimize the peak power draw even if the set of loads scheduled is already feasible.
+Lowering the peak power draw extends battery life and wastes less energy via Joule Heating.
+
+The project was originally intended to provide some form of peak shaving by treating load requests as a type of demand that could "slide" within the window of "release time" and "deadline".
+Due to time constraints, this objective was deferred.
+
+\subsection{Course Related Work}
+This project is part of the Wayne State University Department of Electrical and Computer Engineering's ECE 5280 Cyber-Physical Systems course.
+The following section describes the sensors, actuators, and ISRs used in this project and how they relate to course material.
+
+\subsubsection{Sensors}
+The sensors used in this project include the coulomb counter, GPIO input pins, and system clock.
+The coulomb counter is a standalone integrated circuit which interrupts the LMS each time a fixed value of electric charge passes through the coulomb counter.
+In this manner, the coulomb counter acts as a current measurement device and a "battery fuel gauge".
+
+The GPIO pins on the BMS act as input devices which sense changes in the voltage supplied by the coulomb counters interrupt (INT) and polarity (POL) pins.
+The GPIO INT input is assigned to an ISR (described later) while the GPIO POL input is sampled as needed. 
+
+The system clock (of both Raspberry Pis) is used as a means of synchronization when activating (by the LMS) and detecting (by the BMS) loads.
+Although the system clock does not explicitly "sense" any change in the state of the hardware, it does determine the rate at which time passes and acts as the signaling mechanism for enabling and disabling loads.
+
+\subsubsection{Actuators}
+The actuators used in this project include the fan, GPIO pins, and transistors.
+The fan, the largest system load, imparts force on the air around the system.
+Although the airflow is not measured in any way by the system, actuation is still performed.
+
+The GPIO pins on the LMS are used to activate loads based on the system clock and coulomb counter (accessed by the BMS).
+These GPIO pins enable and disable the PN2222a transistors which allow current flow to the system loads.
+The PN2222a transistors are the only actuators whose output and change imparted on the system is measured.
+Since the PN2222a transistors control current flow from the battery to loads, the coulomb counter is used to determine whether the transistors are functioning appropriately.
+
+\subsubsection{Interrupt Service Routines}
+As mentioned above, the coulomb counter fires an interrupt (INT) each time a fixed value of charge passes through the counter.
+The BMS, therefore, has an ISR defined in https://github.com/aarontwillcock/ece5280cps-ubms/blob/master/bmsDriver.py responsible for handling the interrupt.
+The ISR is also responsible for sampling the polarity (POL) pin of the coulomb counter to determine direction.
 
 \section{Conclusion and Future Work}\label{sec:conclusion}
-\section*{Informal Discussion for Professor Fisher}
-\subsection{Coulomb Counters as a Limiting Factor}
+In conclusion, this work provides a low-cost implementation of a BMS and LMS with online anomaly detection.
+Request-based communication over UDP is used as the basis for anomaly detection by the BMS and the LMS provides activation and deactivation of loads according to the BMS acceptance or rejection of lead requests.
+
+Future work for this project include addressing the deferred objectives described in Section \ref{sec:discussion}, Discussion, and extending the load characteristics that may be used when detecting anomalies including, but not limited to:
+\begin{enumerate}
+    \item power-on profile,
+    \item duty cycle, and
+    \item load-request adjustment by the BMS
+\end{enumerate}
+
+As previously mentioned, all digital resources (including this report) can be found on:
+https://github.com/aarontwillcock/ece5280cps-ubms
 
 \bibliography{uBms}
 \bibliographystyle{abbrv}
